@@ -45,5 +45,3 @@ const [post, commentsByPost1] = await Promise.all([
 ]);
 
 const postWithComments={...post,comments:commentsByPost1};
-
-console.log(postWithComments)
