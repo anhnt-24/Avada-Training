@@ -1,0 +1,29 @@
+query getOrderById($id: ID!) {
+  order(id: $id) {
+    id
+    name
+    createdAt
+
+    billingAddress {
+      firstName
+      lastName
+    }
+
+    shippingAddress {
+      city
+      country
+    }
+
+    lineItems(first: 1) {
+      nodes {
+        name
+        product {
+          id
+          featuredImage {
+            url
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  orders(first: 30) {
+    nodes {
+      id
+      name
+      createdAt
+
+      billingAddress {
+        firstName
+        lastName
+      }
+
+      shippingAddress {
+        city
+        country
+      }
+
+      lineItems(first: 1) {
+        nodes {
+          name
+          product {
+            id
+            featuredImage {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
