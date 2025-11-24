@@ -978,5 +978,15 @@
     "color": "teal",
     "createdAt": "2023-06-23T02:20:22.647Z",
     "image": "https://picsum.photos/seed/98/600/400"
+  },
+  {
+    "id": 99,
+    "createdAt": "2025-11-04T07:51:40.552Z",
+    "name": "Licensed  Towels",
+    "price": 428.85,
+    "description": "The Patience Salad is the latest in a series of fruitful products from Haag, Barrows and Schulist",
+    "product": "Movies",
+    "color": "teal",
+    "image": "https://picsum.photos/seed/98/600/400"
   }
 ]

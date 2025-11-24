@@ -1,66 +1,67 @@
-import saveData from '../helpers/saveData.js';
-import products from './products.json' with { type: 'json' };
-import sort from "../helpers/sort.js";
-import pick from '../helpers/pick.js';
+import saveData from '../helpers/saveData.js'
+import products from './products.json' with { type: 'json' }
+import sort from '../helpers/sort.js'
+import pick from '../helpers/pick.js'
+import { v4 as uuidv4 } from 'uuid'
 
-const PRODUCTS_DATA_PATH = './src/database/products.json';
+const PRODUCTS_DATA_PATH = './src/repositories/todoes.json'
 
-function create(data) {
+function create (data) {
     const newProduct = {
-        id: products.length ? Number(products[products.length - 1].id) + 1 : 1,
+        id: uuidv4(),
         createdAt: new Date().toISOString(),
         ...data,
-    };
-
-    const updatedProducts = [...products, newProduct];
-    saveData(updatedProducts,PRODUCTS_DATA_PATH)
-    return newProduct;
-}
-
-
-function findById(id, fields) {
-    const product = products.find((p) => p.id === Number(id));
-
-    if (!product) return null;
-
-    if (fields && fields.length > 0) {
-        return pick(product, fields);
     }
 
-    return product;
+    const updatedProducts = [...products, newProduct]
+    saveData(updatedProducts, PRODUCTS_DATA_PATH)
+    return newProduct
 }
 
+function findById (id, fields) {
+    const product = products.find((p) => p.id === id)
 
-function find(options) {
-    const result = sort(products, options);
-    return result;
+    if (!product) return null
+
+    if (fields && fields.length > 0) {
+        return pick(product, fields)
+    }
+
+    return product
 }
 
-function updateOne(data) {
-    const index = products.findIndex((p) => p.id === Number(data.id));
-    if (index === -1) return null;
+function find ({ limit, order }) {
+
+    let res = [...products]
+    if (order) res = sort(res, order)
+    if (limit) res = limit(res, limit)
+    return res
+}
+
+function updateOne (data) {
+    const index = products.findIndex((p) => p.id === data.id)
+    if (index === -1) return null
 
     const updatedProduct = {
         ...products[index],
         ...data,
-    };
-
-    const updatedList = [...products];
-    updatedList[index] = updatedProduct;
-    saveData(updatedList,PRODUCTS_DATA_PATH);
-
-    return updatedProduct;
-}
-
-function deleteOne(id) {
-    const filtered = products.filter((p) => Number(p.id) !== Number(id));
-
-    if (filtered.length === products.length) {
-        return false;
     }
 
-    saveData(filtered,PRODUCTS_DATA_PATH);
-    return true;
+    const updatedList = [...products]
+    updatedList[index] = updatedProduct
+    saveData(updatedList, PRODUCTS_DATA_PATH)
+
+    return updatedProduct
+}
+
+function deleteOne (id) {
+    const index = products.findIndex((p) => p.id === id)
+
+    if (index === -1) return false
+
+    products.splice(index, 1)
+    saveData(products, PRODUCTS_DATA_PATH)
+    return true
 }
 
 export default {
@@ -69,6 +70,6 @@ export default {
     find,
     updateOne,
     deleteOne
-};
+}
 
 
