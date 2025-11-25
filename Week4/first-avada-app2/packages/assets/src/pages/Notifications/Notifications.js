@@ -14,16 +14,39 @@ import { useCallback, useState } from 'react'
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
 import useFetchApi from '@assets/hooks/api/useFetchApi'
 import { DeleteIcon } from '@shopify/polaris-icons'
+import useDeleteApi from '@assets/hooks/api/useDeleteApi'
+import useCreateApi from '@assets/hooks/api/useCreateApi'
 
 export default function Notifications () {
-  const { data: notifications = [], loading } = useFetchApi({ url: '/notifications' })
-
+  const { data: notifications, loading, setData: setNotifications } = useFetchApi({ url: '/notifications' })
+  const { handleDelete, deleting } = useDeleteApi({ url: '/notifications/delete' })
+  const { handleCreate, creating } = useCreateApi({ url: '/notifications/sync-orders', fullResp: true })
   const [queryValue, setQueryValue] = useState('')
   const [sortSelected, setSortSelected] = useState('date-created asc')
   const { mode, setMode } = useSetIndexFiltersMode()
-
-  const { selectedResources, allResourcesSelected, handleSelectionChange } =
+  const { selectedResources, allResourcesSelected, handleSelectionChange, clearSelection } =
     useIndexResourceState(notifications)
+
+  const bulkHandleDelete = async () => {
+    try {
+      await handleDelete({ data: { ids: selectedResources } })
+      clearSelection()
+      setNotifications(prev =>
+        prev.filter(notification => !selectedResources.includes(notification.id))
+      )
+    } catch (error) {
+      console.error('Error deleting notifications:', error)
+    }
+  }
+  const bulkHandleSyncOrders = async () => {
+    try {
+      const data = await handleCreate()
+      setNotifications(data.data)
+      clearSelection()
+    } catch (error) {
+      console.error('Error syncing orders:', error)
+    }
+  }
 
   const resourceName = { singular: 'notification', plural: 'notifications' }
   const [isShowSyncBanner, setIsShowSyncBanner] = useState(true)
@@ -40,7 +63,7 @@ export default function Notifications () {
       icon: DeleteIcon,
       destructive: true,
       content: 'Delete',
-      onAction: () => console.log('Todo: implement bulk delete'),
+      onAction: bulkHandleDelete,
     },
   ]
 
@@ -77,7 +100,7 @@ export default function Notifications () {
         {isShowSyncBanner && (
           <Banner
             title="If orders are not up to date"
-            action={{ content: 'Sync manually', url: '' }}
+            action={{ content: 'Sync manually', onAction: bulkHandleSyncOrders, loading: creating || deleting }}
             secondaryAction={{ content: 'I don\'t want', onAction: () => setIsShowSyncBanner(false) }}
             onDismiss={() => setIsShowSyncBanner(false)}
           >
@@ -123,8 +146,7 @@ export default function Notifications () {
               { title: 'Notification' },
               { title: 'Date' },
             ]}
-            loading={loading}
-            pagination={{}}
+            loading={loading || creating || deleting}
           >
             {rowMarkup}
           </IndexTable>

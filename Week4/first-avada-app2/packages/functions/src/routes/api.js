@@ -25,6 +25,8 @@ export default function apiRouter (isEmbed = false) {
   router.put('/settings', settingController.updateSetting)
 
   router.get('/notifications', notificationController.getAll)
+  router.post('/notifications/sync-orders', notificationController.syncOrders)
+  router.delete('/notifications/delete', notificationController.deleteMany)
 
   router.get('/announcements', announcementController.getAll)
   router.get('/announcements/:id', announcementController.getById)
