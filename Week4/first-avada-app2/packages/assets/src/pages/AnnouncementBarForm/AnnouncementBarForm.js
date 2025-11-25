@@ -11,7 +11,6 @@ import useFetchApi from '@assets/hooks/api/useFetchApi'
 import useCreateApi from '@assets/hooks/api/useCreateApi'
 import useDeleteApi from '@assets/hooks/api/useDeleteApi'
 import ModalConfirmation from '@assets/components/DeleteAnnouncementModal/DeleteAnnouncementModal'
-import '../../components/AnnouncementBar/AnnoucementBar.scss'
 import AnnouncementBar from '@assets/components/AnnouncementBar/AnnouncementBar'
 import { XIcon } from '@shopify/polaris-icons'
 import AnnouncementCarousel from '@assets/components/AnnouncementCarousel/AnnouncementCarousel'
@@ -28,7 +27,7 @@ export default function AnnouncementBarForm () {
   const history = useHistory()
   const { id } = useParams()
   const isEdit = !!id
-  const { data: form, setData: setForm, fetched, loading, } = useFetchApi({
+  const { data: form, setData: setForm, loading, } = useFetchApi({
     url: `/announcements/${id}`,
     initLoad: isEdit,
     defaultData: AnnouncementBarSettingsDefault,
@@ -46,7 +45,7 @@ export default function AnnouncementBarForm () {
       id: 'content',
       content: 'Content',
       accessibilityLabel: 'All customers',
-      component: <ContentSideBar/>
+      component: ContentSideBar
     },
     {
       id: 'design',
@@ -172,7 +171,6 @@ export default function AnnouncementBarForm () {
         <Layout.Section>
           <Sticky>
             <Box
-              paddingBlock={'2000'}
               position={'relative'}
               borderColor="border"
               borderWidth="025"
@@ -181,7 +179,7 @@ export default function AnnouncementBarForm () {
               borderRadius="400"
               borderStartStartRadius="0"
               borderStartEndRadius="0"
-              paddingBlockEnd="400"
+              paddingBlock="1000"
             >
               <div
                 style={{
@@ -216,7 +214,7 @@ export default function AnnouncementBarForm () {
                     style={{
                       width: `${form.design.closeIcon.size}px`,
                       height: `${form.design.closeIcon.size}px`,
-                      color: form.decsign.closeIcon.color,
+                      color: form.design.closeIcon.color,
                       marginLeft: 'auto'
                     }}
                   />
@@ -224,14 +222,11 @@ export default function AnnouncementBarForm () {
               </div>
               <CustomeSkeletonPage/>
             </Box>
-            <Box align={'end'} style={{ marginTop: '16px' }}>
+            <Box align={'end'} paddingBlock={'600'}>
               <Button variant={'primary'} onClick={handleSubmit} loading={isUpdating}>Save</Button>
             </Box>
           </Sticky>
-
-
         </Layout.Section>
-
       </Layout>
     </Page>
 

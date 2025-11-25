@@ -1,5 +1,5 @@
 (function() {
-  const BASE_URL = 'https://vsnet-selling-scripts-indiana.trycloudflare.com/scripttag';
+  const BASE_URL = 'https://hang-shaved-amazing-regular.trycloudflare.com/scripttag';
 
   const scriptElement = document.createElement('script');
   scriptElement.type = 'text/javascript';

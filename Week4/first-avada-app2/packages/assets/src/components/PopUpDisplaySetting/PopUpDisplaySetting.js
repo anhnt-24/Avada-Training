@@ -1,37 +1,46 @@
-import { BlockStack, Box, Checkbox, Divider, InlineGrid, Text } from '@shopify/polaris'
+import { BlockStack, Box, Checkbox, ChoiceList, Divider, Text } from '@shopify/polaris'
 import DesktopPositionInput from '@assets/components/DesktopPositionInput/DesktopPositionInput'
 import Slider from '@assets/components/Slider/Slider'
 import PropTypes from 'prop-types'
+import React from 'react'
 
 export default function PopUpDisplaySetting ({ form, updateFormKey }) {
-  return <BlockStack gap="600">
-    <Box>
-      <Text variant="headingMd" as={'h1'}>Appearance</Text>
-      <Box paddingBlockStart="300">
-        <DesktopPositionInput label={'Desktop Position'} value={form.position}
-                              onChange={(position) => updateFormKey('position', position)}></DesktopPositionInput>
-        <Text>The display position of the pop on your website</Text>
+  const displayMethodOptions = [
+    { label: 'Display randomly', value: 'randomly' },
+    { label: 'Display in order', value: 'in-order' },
+  ]
+
+  return (
+    <BlockStack gap="400">
+      <Box>
+        <Text variant="headingMd" as={'h1'}>Appearance</Text>
+        <Box paddingBlockStart="300">
+          <DesktopPositionInput
+            label={'Desktop Position'}
+            value={form.position}
+            onChange={(position) => updateFormKey('position', position)}
+          />
+          <Text tone={'subdued'} variant={'bodyxs'}>The display position of the pop on your website</Text>
+        </Box>
       </Box>
-    </Box>
-    <Checkbox
-      label="Hide time ago"
-      checked={form.hideTimeAgo}
-      onChange={(value) => updateFormKey('hideTimeAgo', value)}
-    />
-    <Checkbox
-      label="Truncate content text"
-      helpText="If your product name is long for one line, it will be truncated to 'Product na...'"
-      checked={form.truncateProductName}
-      onChange={(value) => updateFormKey('truncateProductName', value)}
-    />
 
-    <Divider/>
+      <Checkbox
+        label="Hide time ago"
+        checked={form.hideTimeAgo}
+        onChange={(value) => updateFormKey('hideTimeAgo', value)}
+      />
+      <Checkbox
+        label="Truncate content text"
+        helpText="If your product name is long for one line, it will be truncated to 'Product na...'"
+        checked={form.truncateProductName}
+        onChange={(value) => updateFormKey('truncateProductName', value)}
+      />
 
-    <Text variant="headingMd">Timing</Text>
+      <Divider/>
 
-    <InlineGrid columns={2} gap={'600'}>
+      <Text variant="headingMd">Timing</Text>
 
-      <BlockStack gap="400">
+      <BlockStack gap="600">
         <Slider
           label="Display duration"
           value={form.displayDuration}
@@ -40,7 +49,6 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
           step={1}
           unit="second(s)"
           onChange={(value) => updateFormKey('displayDuration', value)}
-
         />
         <Slider
           label="Time before the first pop"
@@ -50,10 +58,7 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
           step={1}
           unit="second(s)"
           onChange={(value) => updateFormKey('firstDelay', value)}
-
         />
-      </BlockStack>
-      <BlockStack gap="600">
         <Slider
           label="Gap time between two pops"
           value={form.popsInterval}
@@ -61,7 +66,6 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
           max={10}
           unit="second(s)"
           onChange={(value) => updateFormKey('popsInterval', value)}
-
         />
         <Slider
           label="Maximum of popups"
@@ -73,11 +77,74 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
           onChange={(value) => updateFormKey('maxPopsDisplay', value)}
         />
       </BlockStack>
-    </InlineGrid>
-  </BlockStack>
+
+      <Divider/>
+
+      <Text variant="headingMd" as="h3">Sales Pop Strategy</Text>
+
+      <ChoiceList
+        title="Display by"
+        choices={displayMethodOptions}
+        selected={[form.displayMethod]}
+        onChange={(selected) => updateFormKey('displayMethod', selected[0])}
+      />
+
+      <Checkbox
+        label={
+          <Text as="span" fontWeight="regular">
+            Replay playlist
+            <Text as="p" variant="bodySm" tone={'subdued'}>
+              If enabled, the playlist will be replayed when all items have been displayed.
+            </Text>
+          </Text>
+        }
+        checked={form.replayPlaylist}
+        onChange={(value) => updateFormKey('replayPlaylist', value)}
+      />
+
+      <Checkbox
+        label={
+          <Text as="span" fontWeight="regular">
+            Continue after page reload
+            <Text as="p" variant="bodySm" tone={'subdued'}>
+              If enabled, after the page is reloaded, the next popup is displayed. If not, the list will be replayed
+              from the start.
+            </Text>
+          </Text>
+        }
+        checked={form.continueAfterReload}
+        onChange={(value) => updateFormKey('continueAfterReload', value)}
+      />
+
+      <Checkbox
+        label={
+          <Text as="span" fontWeight="regular">
+            Based on product view
+            <Text as="p" variant="bodySm" tone="subdued">
+              If enabled, only display the popups regarding the product a customer is viewing.
+            </Text>
+          </Text>
+        }
+        checked={form.basedOnProductView}
+        onChange={(value) => updateFormKey('basedOnProductView', value)}
+      />
+    </BlockStack>
+  )
 }
 
 PopUpDisplaySetting.propTypes = {
-  form: PropTypes.shape({}),
+  form: PropTypes.shape({
+    position: PropTypes.string,
+    hideTimeAgo: PropTypes.bool,
+    truncateProductName: PropTypes.bool,
+    displayDuration: PropTypes.number,
+    firstDelay: PropTypes.number,
+    popsInterval: PropTypes.number,
+    maxPopsDisplay: PropTypes.number,
+    displayMethod: PropTypes.string,
+    replayPlaylist: PropTypes.bool,
+    continueAfterReload: PropTypes.bool,
+    basedOnProductView: PropTypes.bool,
+  }),
   updateFormKey: PropTypes.func,
 }

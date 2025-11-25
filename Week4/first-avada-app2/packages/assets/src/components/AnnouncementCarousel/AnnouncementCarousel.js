@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import AnnouncementBar from '@assets/components/AnnouncementBar/AnnouncementBar'
-import { Button } from '@shopify/polaris'
 
 export default function AnnouncementCarousel ({ form }) {
   const carouselRef = useRef(null)
@@ -21,7 +20,7 @@ export default function AnnouncementCarousel ({ form }) {
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      <Button
+      <button
         onClick={scrollPrev}
         style={{
           position: 'absolute',
@@ -32,9 +31,8 @@ export default function AnnouncementCarousel ({ form }) {
         }}
       >
         ◀
-      </Button>
+      </button>
 
-      {/* Carousel */}
       <div
         ref={carouselRef}
         className="carousel-container"
@@ -63,8 +61,7 @@ export default function AnnouncementCarousel ({ form }) {
         ))}
       </div>
 
-      {/* Nút Next */}
-      <Button
+      <button
         onClick={scrollNext}
         style={{
           position: 'absolute',
@@ -75,7 +72,7 @@ export default function AnnouncementCarousel ({ form }) {
         }}
       >
         ▶
-      </Button>
+      </button>
     </div>
   )
 }

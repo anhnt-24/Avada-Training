@@ -1,12 +1,28 @@
 export const defaultSetting = {
-  position: 'bottom-left',
+  position: 'bottom-right',
   hideTimeAgo: true,
   truncateProductName: true,
-  displayDuration: 5,
+
+  displayDuration: 3,
   firstDelay: 2,
-  popsInterval: 10,
-  maxPopsDisplay: 5,
+  popsInterval: 2,
+
+  maxPopsDisplay: 2,
+
   includedUrls: '',
   excludedUrls: '',
-  allowShow: 'all',
+  allowShow: 'specific',
+
+  specificPages: {
+    homepage: true,
+    productPages: true,
+    collectionPages: true,
+    cartPages: true,
+    blogPages: true,
+  },
+
+  displayMethod: 'randomly',
+  replayPlaylist: false,
+  continueAfterReload: false,
+  basedOnProductView: false,
 }

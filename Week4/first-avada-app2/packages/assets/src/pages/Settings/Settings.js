@@ -1,89 +1,83 @@
-import React, { useEffect } from 'react'
-import {
-  BlockStack,
-  Box,
-  Card,
-  InlineGrid,
-  Page,
-  SkeletonBodyText,
-  SkeletonDisplayText,
-  SkeletonThumbnail,
-  Tabs,
-} from '@shopify/polaris'
-import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
-import useFetchApi from '@assets/hooks/api/useFetchApi'
+import React, { useEffect, useState } from 'react'
+import { Card, Layout, Page, Tabs } from '@shopify/polaris'
+import { SaveBar, useAppBridge } from '@shopify/app-bridge-react'
 import { defaultSetting } from '@assets/const/setting/defaultSetting'
-import useEditApi from '@assets/hooks/api/useEditApi'
 import PopUpDisplaySetting from '@assets/components/PopUpDisplaySetting/PopUpDisplaySetting'
 import PageRestriction from '@assets/components/PageRestriction/PageRestriction'
+import SalePopsPreview from '@assets/components/SalePopsPreview/SalePopsPreview'
+import LoadingSkeletonPage from '@assets/components/LoadingSkeletonPage/LoadingSkeletonPage'
+import useFetchApi from '@assets/hooks/api/useFetchApi'
+import useEditApi from '@assets/hooks/api/useEditApi'
 
 export default function Settings () {
+  const shopify = useAppBridge()
   const { data: form, setData, loading } = useFetchApi({ url: '/settings', defaultData: defaultSetting })
-  const { editing, handleEdit } = useEditApi({ url: '/settings' })
-  const [selectedTab, setSelectedTab] = React.useState(0)
-
-  useEffect(() => {
-    if (form)
-      setData(form)
-  }, [form])
-
+  const { handleEdit, editing } = useEditApi({ url: '/settings' })
+  const [selectedTab, setSelectedTab] = useState(0)
+  const [initialForm, setInitialForm] = useState(null)
+  const SAVE_BAR_ID = 'my-save-bar'
   const updateFormKey = (key, value) => {
-    setData(prev => ({
-      ...prev,
-      [key]: value
-    }))
+    setData(prev => ({ ...prev, [key]: value }))
   }
 
+  const handleTabChange = (selectedIndex) => setSelectedTab(selectedIndex)
+
+  const handleSave = async () => {
+    try {
+      await handleEdit(form)
+      setInitialForm(form)
+      await shopify.saveBar.hide(SAVE_BAR_ID)
+    } catch (err) {
+    }
+  }
+
+  const handleDiscard = async () => {
+    setData(initialForm)
+    await shopify.saveBar.hide(SAVE_BAR_ID)
+  }
+
+  useEffect(() => {
+    if (!initialForm) return
+
+    const isChanged = JSON.stringify(form) !== JSON.stringify(initialForm)
+
+    if (isChanged) {
+      shopify.saveBar.show(SAVE_BAR_ID)
+    } else {
+      shopify.saveBar.hide(SAVE_BAR_ID)
+    }
+  }, [form, initialForm])
+
+  useEffect(() => {
+    if (form && !initialForm) {
+      setInitialForm(form)
+    }
+  }, [form, initialForm])
+
   const tabs = [
-    {
-      id: 'display',
-      content: 'Display',
-      contentJsx: <PopUpDisplaySetting form={form} updateFormKey={updateFormKey}></PopUpDisplaySetting>
-    },
-    {
-      id: 'triggers',
-      content: 'Triggers',
-      contentJsx: <PageRestriction form={form} updateFormKey={updateFormKey}></PageRestriction>
-    },
+    { id: 'display', content: 'Display', contentJsx: <PopUpDisplaySetting form={form} updateFormKey={updateFormKey}/> },
+    { id: 'triggers', content: 'Triggers', contentJsx: <PageRestriction form={form} updateFormKey={updateFormKey}/> },
   ]
 
-  const handleTabChange = (selectedIndex) => setSelectedTab(selectedIndex)
+  if (loading) return <LoadingSkeletonPage/>
+
   return (
-    <Page title={'Settings'} subtitle={'Decide how your notifications will display'}
-          primaryAction={{ content: 'Save', onAction: () => handleEdit(form) }}>
-      {editing || loading ?
-        <InlineGrid columns={['oneHalf', 'twoThirds']} gap={'400'}>
-          <Card>
-            <SkeletonThumbnail size="large"/>
-            <SkeletonBodyText/>
-          </Card>
-          <Box borderWidth="025" borderColor="bg" borderRadius="150">
-            <Box padding="400">
-              <BlockStack gap="600">
-                <SkeletonDisplayText size="small"/>
-                <SkeletonBodyText/>
-                <SkeletonDisplayText size="small"/>
-                <InlineGrid columns={2} gap="600">
-                  <SkeletonBodyText/>
-                  <SkeletonBodyText/>
-                </InlineGrid>
-              </BlockStack>
-            </Box>
-          </Box>
-        </InlineGrid>
-        :
-        <InlineGrid columns={['oneHalf', 'twoThirds']} gap={'400'}>
-          <Card>
-            <NotificationPopup></NotificationPopup>
-          </Card>
-          <Card>
-            <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange}></Tabs>
-            {tabs[selectedTab].contentJsx}
-          </Card>
-        </InlineGrid>
-      }
+    <Page title="Sale Pops settings" subtitle="Decide how your notifications will display"
+          backAction={{ url: '/notifications' }}>
+      <Layout>
+        <Layout.Section>
+          <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange}/>
+          <Card>{tabs[selectedTab].contentJsx}</Card>
+        </Layout.Section>
+        <Layout.Section variant="oneThird">
+          <SalePopsPreview position={form.position}/>
+        </Layout.Section>
+      </Layout>
 
+      <SaveBar id={SAVE_BAR_ID}>
+        <button onClick={handleSave} variant={'primary'} loading={editing && ''}>Save</button>
+        <button onClick={handleDiscard} disabled={editing}>Discard</button>
+      </SaveBar>
     </Page>
-
   )
 }

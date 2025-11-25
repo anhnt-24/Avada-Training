@@ -33,8 +33,9 @@ export default function Slider ({
           suffix={''}
         />
       </div>
-      <Box maxWidth={'100px'}>
+      <Box maxWidth={'150px'} minWidth={'150px'}>
         <TextField
+          type="number"
           value={String(value)}
           onChange={handleChange}
           suffix={unit}
