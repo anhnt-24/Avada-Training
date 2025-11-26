@@ -19,6 +19,7 @@ query getOrderById($id: ID!) {
         name
         product {
           id
+          handle
           featuredImage {
             url
           }

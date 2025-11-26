@@ -3,12 +3,10 @@ import DesktopPositionInput from '@assets/components/DesktopPositionInput/Deskto
 import Slider from '@assets/components/Slider/Slider'
 import PropTypes from 'prop-types'
 import React from 'react'
+import FontDropdown from '@assets/components/FontDropdown/FontDropdown'
+import { DISPLAY_METHOD_OPTIONS } from '@assets/const/salePopsSettings'
 
 export default function PopUpDisplaySetting ({ form, updateFormKey }) {
-  const displayMethodOptions = [
-    { label: 'Display randomly', value: 'randomly' },
-    { label: 'Display in order', value: 'in-order' },
-  ]
 
   return (
     <BlockStack gap="400">
@@ -36,7 +34,28 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
         onChange={(value) => updateFormKey('truncateProductName', value)}
       />
 
+      <Checkbox
+        label="Hide close icon"
+        checked={form.hideCloseIcon}
+        onChange={(value) => updateFormKey('hideCloseIcon', value)}
+        helpText={' If enabled, customers can close the sale popup after a certain interval.  \n' +
+          '  This prevents the popup from bothering them.'}
+      />
+
+      {form.hideCloseIcon && (
+        <Slider
+          label="Hide pops after"
+          value={form.hidePopsAfter}
+          min={1}
+          max={24}
+          unit="hour(s)"
+          onChange={(value) => updateFormKey('hidePopsAfter', value)}
+        />
+      )}
       <Divider/>
+
+      <FontDropdown value={form.fontFamily}
+                    onChange={(selected) => updateFormKey('fontFamily', selected)}></FontDropdown>
 
       <Text variant="headingMd">Timing</Text>
 
@@ -77,14 +96,11 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
           onChange={(value) => updateFormKey('maxPopsDisplay', value)}
         />
       </BlockStack>
-
       <Divider/>
-
       <Text variant="headingMd" as="h3">Sales Pop Strategy</Text>
-
       <ChoiceList
         title="Display by"
-        choices={displayMethodOptions}
+        choices={DISPLAY_METHOD_OPTIONS}
         selected={[form.displayMethod]}
         onChange={(selected) => updateFormKey('displayMethod', selected[0])}
       />

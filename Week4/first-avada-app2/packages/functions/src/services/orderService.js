@@ -1,10 +1,13 @@
 import { getShopByShopifyDomain } from '@avada/core'
 import { initShopify } from '@functions/services/shopifyService'
 import { loadGraphQL } from '@functions/helpers/graphql/graphqlHelpers'
-import { createManyNotifications, deleteNotificationsByShop } from '@functions/repositories/notificationRepository'
-import { createSetting } from '@functions/repositories/settingRepository'
-import { defaultSetting } from '@functions/const/setting/defaultSetting'
-import mapOrderToNotification from '@functions/helpers/mapper/mapOderToNotification'
+import {
+  createManyNotifications,
+  deleteNotificationsByShop
+} from '@functions/repositories/salePopsNotificationsRepository'
+import { createSetting } from '@functions/repositories/salePopsSettingsRepository'
+import { salePopsSettings } from '@functions/const/salePopsSettings'
+import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotification'
 
 /**
  *
@@ -14,10 +17,10 @@ import mapOrderToNotification from '@functions/helpers/mapper/mapOderToNotificat
  */
 export async function syncOrdersAndSetting (shopifyDomain, shopData) {
   try {
-    const data = getOrders(shopData)
+    const data = await getOrders(shopData)
     const mappedNotifications = data.orders.nodes.map(order => mapOrderToNotification(order, shopifyDomain))
     await deleteNotificationsByShop(shopifyDomain,)
-    await Promise.all([createSetting(shopifyDomain, defaultSetting), createManyNotifications(mappedNotifications)])
+    await Promise.all([createSetting(shopifyDomain, salePopsSettings), createManyNotifications(mappedNotifications)])
   } catch (error) {
     console.log(error)
     throw error
@@ -33,7 +36,7 @@ export async function getOrders (shopData) {
   try {
     const shopify = initShopify(shopData)
     const query = loadGraphQL('/orders.graphql')
-    return shopify.graphql(query)
+    return await shopify.graphql(query)
   } catch (error) {
     console.log(error)
     throw error

@@ -3,10 +3,10 @@ import {
   deleteManyNotifications,
   deleteNotificationsByShop,
   getNotificationsByShop
-} from '@functions/repositories/notificationRepository'
+} from '@functions/repositories/salePopsNotificationsRepository'
 import { getShopByShopifyDomain } from '@avada/core'
 import { getOrders } from '@functions/services/orderService'
-import mapOrderToNotification from '@functions/helpers/mapper/mapOderToNotification'
+import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotification'
 
 /**
  * Lấy tất cả notifications của shop

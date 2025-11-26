@@ -4,8 +4,8 @@ import * as shopController from '@functions/controllers/shopController'
 import * as subscriptionController from '@functions/controllers/subscriptionController'
 import * as appNewsController from '@functions/controllers/appNewsController'
 import { getApiPrefix } from '@functions/const/app'
-import * as settingController from '@functions/controllers/settingController'
-import * as notificationController from '@functions/controllers/notificationController'
+import * as salePopsSettingsController from '@functions/controllers/salePopsSettingsController'
+import * as salePopsNotificationController from '@functions/controllers/salePopsNotificationsController'
 import * as announcementController from '@functions/controllers/anouncementBarController'
 
 export default function apiRouter (isEmbed = false) {
@@ -21,12 +21,13 @@ export default function apiRouter (isEmbed = false) {
   router.put('/subscriptions', subscriptionController.updateOne)
   router.delete('/subscriptions/:id', subscriptionController.deleteOne)
 
-  router.get('/settings', settingController.getSetting)
-  router.put('/settings', settingController.updateSetting)
+  router.get('/settings', salePopsSettingsController.getSetting)
+  router.put('/settings', salePopsSettingsController.updateSetting)
+  router.put('/settings/active', salePopsSettingsController.toggleActiveSetting)
 
-  router.get('/notifications', notificationController.getAll)
-  router.post('/notifications/sync-orders', notificationController.syncOrders)
-  router.delete('/notifications/delete', notificationController.deleteMany)
+  router.get('/notifications', salePopsNotificationController.getAll)
+  router.post('/notifications/sync-orders', salePopsNotificationController.syncOrders)
+  router.delete('/notifications/delete', salePopsNotificationController.deleteMany)
 
   router.get('/announcements', announcementController.getAll)
   router.get('/announcements/:id', announcementController.getById)

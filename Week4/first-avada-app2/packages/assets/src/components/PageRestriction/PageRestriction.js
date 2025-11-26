@@ -1,26 +1,10 @@
 import { BlockStack, Box, Checkbox, ChoiceList, Divider, Text, TextField } from '@shopify/polaris'
 import PropTypes from 'prop-types'
 import React from 'react'
+import { RESTRICTION_OPTIONS } from '@assets/const/salePopsSettings'
 
 export default function PageRestriction ({ form, updateFormKey }) {
-  const restrictionOptions = [
-    { label: 'All pages', value: 'all' },
-    { label: 'Home page only', value: 'homePageOnly' },
-    { label: 'Specific page', value: 'specific' },
-  ]
-
-  const handleChoiceChange = (selected) => {
-    if (selected.includes('specific')) {
-      updateFormKey('allowShow', 'specific')
-    } else if (selected.includes('homePageOnly')) {
-      updateFormKey('allowShow', 'homePageOnly')
-    } else {
-      updateFormKey('allowShow', 'all')
-    }
-  }
-
   const selectedPages = [form.allowShow]
-
   const handleSpecificPageCheckboxChange = (key) => (value) => {
     updateFormKey('specificPages', {
       ...form.specificPages,
@@ -37,9 +21,9 @@ export default function PageRestriction ({ form, updateFormKey }) {
 
         <ChoiceList
           title="Select pages"
-          choices={restrictionOptions}
+          choices={RESTRICTION_OPTIONS}
           selected={selectedPages}
-          onChange={handleChoiceChange}
+          onChange={(selected) => updateFormKey('allowShow', selected[0])}
 
         />
 

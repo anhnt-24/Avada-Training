@@ -10,7 +10,6 @@ import appConfig from '@functions/config/app'
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes'
 import { syncOrdersAndSetting } from '@functions/services/orderService'
 import { registerWebhook } from '@functions/services/registerWebhook'
-import { registerScriptTag } from '@functions/services/registerScriptTag'
 
 // Initialize all demand configuration for an application
 const api = new App()
@@ -35,15 +34,14 @@ api.use(
     optionalScopes: shopifyOptionalScopes,
     accessTokenKey: shopifyConfig.accessTokenKey,
     afterLogin: async ctx => {
-    },
-    afterInstall: async ctx => {
       const shopifyDomain = ctx.state.shopify.shop
       const shopData = await getShopByShopifyDomain(shopifyDomain)
       await Promise.all([
         registerWebhook(shopData),
         syncOrdersAndSetting(shopifyDomain, shopData),
-        registerScriptTag(shopData),
       ])
+    },
+    afterInstall: async ctx => {
 
     },
     initialPlan: {

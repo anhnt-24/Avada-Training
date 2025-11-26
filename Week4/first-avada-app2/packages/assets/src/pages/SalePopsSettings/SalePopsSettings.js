@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Layout, Page, Tabs } from '@shopify/polaris'
 import { SaveBar, useAppBridge } from '@shopify/app-bridge-react'
-import { defaultSetting } from '@assets/const/setting/defaultSetting'
+import { salePopsSettings } from '@assets/const/salePopsSettings'
 import PopUpDisplaySetting from '@assets/components/PopUpDisplaySetting/PopUpDisplaySetting'
 import PageRestriction from '@assets/components/PageRestriction/PageRestriction'
 import SalePopsPreview from '@assets/components/SalePopsPreview/SalePopsPreview'
@@ -9,9 +9,9 @@ import LoadingSkeletonPage from '@assets/components/LoadingSkeletonPage/LoadingS
 import useFetchApi from '@assets/hooks/api/useFetchApi'
 import useEditApi from '@assets/hooks/api/useEditApi'
 
-export default function Settings () {
+export default function SalePopsSettings () {
   const shopify = useAppBridge()
-  const { data: form, setData, loading } = useFetchApi({ url: '/settings', defaultData: defaultSetting })
+  const { data: form, setData, loading } = useFetchApi({ url: '/settings', defaultData: salePopsSettings })
   const { handleEdit, editing } = useEditApi({ url: '/settings' })
   const [selectedTab, setSelectedTab] = useState(0)
   const [initialForm, setInitialForm] = useState(null)
@@ -70,7 +70,7 @@ export default function Settings () {
           <Card>{tabs[selectedTab].contentJsx}</Card>
         </Layout.Section>
         <Layout.Section variant="oneThird">
-          <SalePopsPreview position={form.position}/>
+          <SalePopsPreview settings={form}/>
         </Layout.Section>
       </Layout>
 

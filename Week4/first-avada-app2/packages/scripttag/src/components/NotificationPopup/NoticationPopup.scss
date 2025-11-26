@@ -1,10 +1,14 @@
 .Avava-SP__Wrapper {
-  width: 293px;
+  position: relative;
+  z-index: 99;
   color: #333;
+  width: 270px;
 }
 
 .Avava-SP__Wrapper .Avava-SP__LinkWrapper {
   color: #333;
+  align-items: center;
+  text-decoration: none;
 }
 
 @media screen and (max-width: 575px) {
@@ -15,9 +19,7 @@
 
 .Avava-SP__Wrapper img {
   max-width: 135px;
-  opacity: 0;
   visibility: hidden;
-  position: absolute;
   top: -100px;
   left: -10px;
   text-align: center;
@@ -29,7 +31,6 @@
 
 .Avava-SP__Wrapper .Avava-SP__Inner {
   position: relative;
-
 }
 
 .Avava-SP__Wrapper .Avava-SP__Inner:hover img {
@@ -39,29 +40,27 @@
 }
 
 .Avava-SP__Wrapper .Avava-SP__Container {
+  border: 1px solid var(--p-color-bg);
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
-  border-radius: 20px;
-  -webkit-box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
-  -moz-box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
-  box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
-  background: #ffffff;
+  border-radius: 15px;
   padding: 5px;
+  -webkit-box-shadow: 1px 0 5px rgba(5, 5, 5, 0.07);
+  -moz-box-shadow: 1px 0 5px rgba(5, 5, 5, 0.07);
+  background: linear-gradient(135deg, #e5e5e5, #ffffff);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); /* ngang, dọc, blur, màu */
+
 }
 
 .Avava-SP__Wrapper .Avava-SP__Image {
-  height: 65px;
+  height: 60px;
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
   color: #43495a;
   font-size: 55px;
-  width: 65px;
+  width: 60px;
   display: inline-block;
-  text-align: center;
-  vertical-align: top;
-  font-weight: bold;
-  line-height: 69px;
   background-size: cover;
   background-position: center;
 }
@@ -71,8 +70,6 @@
   width: calc(100% - 75px);
   width: -moz-calc(100% - 75px);
   width: -webkit-calc(100% - 75px);
-  padding-top: 5px;
-  padding-bottom: 5px;
   padding-left: 15px;
 }
 
@@ -83,9 +80,8 @@
 
 .Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Subtitle {
   margin-bottom: 0;
-  font-size: 10px;
-  //font-weight: bold;
-  //color: #8b93a8;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Footer {
@@ -101,34 +97,24 @@
   padding-left: 8px;
 }
 
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.Avada__Truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* chỉ 1 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
-.fade-in-up {
-  animation: fadeInUp 0.5s ease forwards;
+.Avada-SP__Close-icon {
+  position: absolute;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 100%;
+  right: 6px;
+  top: 2px;
 }
 
-@keyframes fadeOutUp {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
+.Avada-SP__Close-icon:hover {
+  color: red;
 }
-
-.fade-out-up {
-  animation: fadeOutUp 0.5s ease forwards;
-}
-

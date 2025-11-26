@@ -1,5 +1,5 @@
-import { getSettingByShopDomain } from '@functions/repositories/settingRepository'
-import { getNotificationsByShop } from '@functions/repositories/notificationRepository'
+import { getSettingByShopDomain } from '@functions/repositories/salePopsSettingsRepository'
+import { getNotificationsByShop } from '@functions/repositories/salePopsNotificationsRepository'
 
 /**
  *

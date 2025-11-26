@@ -1,5 +1,5 @@
 {
-  orders(first: 30) {
+  orders(first: 45) {
     nodes {
       id
       name
@@ -20,6 +20,7 @@
           name
           product {
             id
+            handle
             featuredImage {
               url
             }

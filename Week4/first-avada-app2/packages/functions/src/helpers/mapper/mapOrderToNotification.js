@@ -8,6 +8,7 @@ export default function mapOrderToNotification (order, shopifyDomain) {
     productName: lineItem?.name || '',
     country: order?.shippingAddress?.country || '',
     productId: product?.id,
+    productHandle: product?.handle || '',
     timestamp: order?.createdAt ? new Date(order.createdAt) : null,
     productImage: product?.featuredImage?.url || '',
     shopifyDomain

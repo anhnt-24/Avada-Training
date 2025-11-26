@@ -1,6 +1,6 @@
 import { getOrderById } from '@functions/services/orderService'
-import { createNotification } from '@functions/repositories/notificationRepository'
-import mapOrderToNotification from '@functions/helpers/mapper/mapOderToNotification'
+import { createNotification } from '@functions/repositories/salePopsNotificationsRepository'
+import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotification'
 
 /**
  *

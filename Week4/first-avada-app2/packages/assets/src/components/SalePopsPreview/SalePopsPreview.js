@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import './SalePopsPreviews.scss'
 import PreviewDesktopModal from '@assets/components/PreviewDesktopModal/PreviewDesktopModal'
 
-export default function SalePopsPreview ({ position }) {
+export default function SalePopsPreview ({ settings }) {
   const [isDesktopPreview, setIsDesktopPreview] = useState(false)
   return <Card>
     <BlockStack gap={'400'}>
@@ -24,10 +24,11 @@ export default function SalePopsPreview ({ position }) {
           <Box borderWidth={'100'} borderRadius={'full'}></Box>
         </Box>
         <div style={{ marginTop: 'auto' }}>
-          <NotificationPopup></NotificationPopup>
+          <NotificationPopup settings={settings}></NotificationPopup>
         </div>
       </div>
-      <PreviewDesktopModal isOpen={isDesktopPreview} onClose={() => setIsDesktopPreview(false)} position={position}>
+      <PreviewDesktopModal isOpen={isDesktopPreview} onClose={() => setIsDesktopPreview(false)}
+                           settings={settings}>
       </PreviewDesktopModal>
     </BlockStack>
   </Card>

@@ -2,21 +2,7 @@ import { Firestore } from '@google-cloud/firestore'
 import { formatDateFields } from '@avada/firestore-utils'
 
 const firestore = new Firestore()
-const collection = firestore.collection('Settings')
-
-/**
- *
- * @param {string} shopId
- * @returns {Promise<*&{id}>}
- */
-export async function getSettingByShopId (shopId) {
-  const querySnapshot = await collection.where('shopId', '==', shopId).limit(1).get()
-
-  if (querySnapshot.empty) return null
-
-  const doc = querySnapshot.docs[0]
-  return { id: doc.id, ...formatDateFields(doc.data()) }
-}
+const collection = firestore.collection('salePopsSettings')
 
 /**
  *
@@ -32,7 +18,10 @@ export async function getSettingByShopDomain (shopifyDomain) {
   if (querySnapshot.empty) return null
 
   const doc = querySnapshot.docs[0]
-  return { id: doc.id, ...formatDateFields(doc.data()) }
+  return {
+    id: doc.id, ...formatDateFields(doc.data())
+
+  }
 }
 
 /**
@@ -59,7 +48,7 @@ export async function createSetting (shopifyDomain, data) {
  * @param data
  * @returns {Promise<*>}
  */
-export async function updateSetting (shopifyDomain, data) {
+export async function updateSalePopsSettings (shopifyDomain, data) {
   const querySnapshot = await collection
     .where('shopifyDomain', '==', shopifyDomain)
     .limit(1)
@@ -71,5 +60,28 @@ export async function updateSetting (shopifyDomain, data) {
   const doc = querySnapshot.docs[0]
   return collection.doc(doc.id).update(data)
 }
+
+/**
+ *
+ * @param shopifyDomain
+ * @returns {Promise<FirebaseFirestore.WriteResult|*>}
+ */
+export async function toggleActive (shopifyDomain) {
+  const querySnapshot = await collection
+    .where('shopifyDomain', '==', shopifyDomain)
+    .limit(1)
+    .get()
+
+  if (querySnapshot.empty) {
+    return createSetting(shopifyDomain, { isActive: true })
+  }
+
+  const doc = querySnapshot.docs[0]
+  const currentData = doc.data()
+  const newActiveValue = !currentData.isActive
+
+  return collection.doc(doc.id).update({ isActive: newActiveValue })
+}
+
 
 

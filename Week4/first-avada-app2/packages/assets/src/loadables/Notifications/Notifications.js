@@ -1,5 +1,5 @@
 import React from 'react'
 
-const NotificationsLoadable = React.lazy(() => import('../../pages/Notifications/Notifications'))
+const NotificationsLoadable = React.lazy(() => import('../../pages/SalePopsNotifications/./SalePopsNotifications'))
 
 export default NotificationsLoadable

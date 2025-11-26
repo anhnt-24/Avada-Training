@@ -1,7 +1,7 @@
 import { Box, Modal } from '@shopify/polaris'
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
 
-export default function PreviewDesktopModal ({ isOpen, onClose, position = 'bottom-left' }) {
+export default function PreviewDesktopModal ({ isOpen, onClose, settings }) {
 
   const getBoxPosition = (pos) => {
     const style = {
@@ -28,8 +28,8 @@ export default function PreviewDesktopModal ({ isOpen, onClose, position = 'bott
     >
       <Modal.Section>
         <div style={{ position: 'relative', height: '500px' }}>
-          <Box style={getBoxPosition(position)}>
-            <NotificationPopup/>
+          <Box style={getBoxPosition(settings.position)}>
+            <NotificationPopup settings={settings}/>
           </Box>
         </div>
       </Modal.Section>

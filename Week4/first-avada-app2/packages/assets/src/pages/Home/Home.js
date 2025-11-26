@@ -37,7 +37,7 @@ export default function Home () {
             {/*  <InlineStack gap="200" blockAlign="center">*/}
             {/*    <Text as="span">Fullscreen</Text>*/}
             {/*    <Button onClick={() => openFullscreen('/samples')}>Samples</Button>*/}
-            {/*    <Button onClick={() => openFullscreen('/settings')}>Settings</Button>*/}
+            {/*    <Button onClick={() => openFullscreen('/settings')}>SalePopsSettings</Button>*/}
             {/*    <Button url="/fullscreen-page-a">Fullscreen page a</Button>*/}
             {/*  </InlineStack>*/}
             {/*</Card>*/}

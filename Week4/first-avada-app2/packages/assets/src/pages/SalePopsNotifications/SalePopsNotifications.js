@@ -1,7 +1,7 @@
 import {
+  Badge,
   Banner,
   BlockStack,
-  Box,
   IndexFilters,
   IndexTable,
   LegacyCard,
@@ -16,17 +16,36 @@ import useFetchApi from '@assets/hooks/api/useFetchApi'
 import { DeleteIcon } from '@shopify/polaris-icons'
 import useDeleteApi from '@assets/hooks/api/useDeleteApi'
 import useCreateApi from '@assets/hooks/api/useCreateApi'
+import useEditApi from '@assets/hooks/api/useEditApi'
 
-export default function Notifications () {
+export default function SalePopsNotifications () {
   const { data: notifications, loading, setData: setNotifications } = useFetchApi({ url: '/notifications' })
+  const { data: salePopsSettingsData, setData: setSalePopsSettingsData } = useFetchApi({ url: '/settings' })
+  const { editing: activating, handleEdit: handleActive } = useEditApi({ url: '/settings/active' })
   const { handleDelete, deleting } = useDeleteApi({ url: '/notifications/delete' })
   const { handleCreate, creating } = useCreateApi({ url: '/notifications/sync-orders', fullResp: true })
-  const [queryValue, setQueryValue] = useState('')
+  const [isShowSyncBanner, setIsShowSyncBanner] = useState(true)
+  const handleSortChange = useCallback((value) => setSortSelected(value), [])
   const [sortSelected, setSortSelected] = useState('date-created asc')
   const { mode, setMode } = useSetIndexFiltersMode()
   const { selectedResources, allResourcesSelected, handleSelectionChange, clearSelection } =
     useIndexResourceState(notifications)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  const paginatedNotifications = notifications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+  const totalPages = Math.ceil(notifications.length / itemsPerPage)
 
+  const bulkHandleToggleActive = async () => {
+    try {
+      await handleActive()
+      setSalePopsSettingsData(settings => ({ ...settings, isActive: !settings.isActive }))
+    } catch (e) {
+
+    }
+  }
   const bulkHandleDelete = async () => {
     try {
       await handleDelete({ data: { ids: selectedResources } })
@@ -49,10 +68,6 @@ export default function Notifications () {
   }
 
   const resourceName = { singular: 'notification', plural: 'notifications' }
-  const [isShowSyncBanner, setIsShowSyncBanner] = useState(true)
-  const handleQueryChange = useCallback((value) => setQueryValue(value), [])
-  const handleQueryClear = useCallback(() => setQueryValue(''), [])
-  const handleSortChange = useCallback((value) => setSortSelected(value), [])
 
   const sortOptions = [
     { label: 'Date created', value: 'date-created asc', directionLabel: 'Ascending' },
@@ -67,7 +82,7 @@ export default function Notifications () {
     },
   ]
 
-  const rowMarkup = notifications.map((item, index) => (
+  const rowMarkup = paginatedNotifications.map((item, index) => (
     <IndexTable.Row
       id={item.id}
       key={item.id}
@@ -75,9 +90,7 @@ export default function Notifications () {
       selected={selectedResources.includes(item.id)}
     >
       <IndexTable.Cell>
-        <Box maxWidth="350px">
-          <NotificationPopup/>
-        </Box>
+        <NotificationPopup settings={salePopsSettingsData} {...item}/>
       </IndexTable.Cell>
       <IndexTable.Cell>
         <Text>{new Date(item.timestamp).toLocaleDateString('en-US', {
@@ -91,10 +104,21 @@ export default function Notifications () {
 
   return (
     <Page
-      title="Notifications"
+      title="SalePops Notifications"
       subtitle="List of sales notifications from Shopify"
-      primaryAction={{ content: 'Import', onAction: () => 1 }}
-      secondaryActions={[{ content: 'Settings', url: '/settings' }]}
+      titleMetadata={<Badge
+        tone={salePopsSettingsData.isActive ? 'success' : 'warning'}>{salePopsSettingsData.isActive ? 'Active' : 'Disabled'}</Badge>}
+      primaryAction={
+        {
+          content: !salePopsSettingsData.isActive ? 'Active' : 'Disable',
+          onAction: bulkHandleToggleActive,
+          destructive: salePopsSettingsData.isActive,
+          loading: activating,
+        }
+      }
+      secondaryActions={[{ content: 'Settings', url: '/settings' },
+        { content: 'Import', onAction: () => 1 }
+      ]}
     >
       <BlockStack gap={'400'}>
         {isShowSyncBanner && (
@@ -117,9 +141,6 @@ export default function Notifications () {
             sortOptions={sortOptions}
             sortSelected={sortSelected}
             onSort={handleSortChange}
-            queryValue={queryValue}
-            onQueryChange={handleQueryChange}
-            onQueryClear={handleQueryClear}
             primaryAction={{
               content: 'Delete selected',
               onAction: () => console.log('Delete', selectedResources),
@@ -146,6 +167,14 @@ export default function Notifications () {
               { title: 'Notification' },
               { title: 'Date' },
             ]}
+            pagination={{
+              hasPrevious: currentPage > 1,
+              hasNext: currentPage * itemsPerPage < notifications.length,
+              label: <Text
+                variant={'bodyLg'}>Page {currentPage}/{totalPages}</Text>,
+              onPrevious: () => setCurrentPage(prev => Math.max(prev - 1, 1)),
+              onNext: () => setCurrentPage(prev => prev + 1),
+            }}
             loading={loading || creating || deleting}
           >
             {rowMarkup}

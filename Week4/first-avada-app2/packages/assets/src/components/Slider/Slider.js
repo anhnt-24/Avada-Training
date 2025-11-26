@@ -18,8 +18,6 @@ export default function Slider ({
     onChange?.(num)
   }
 
-  // semantic
-
   return (
     <Stack blockAlign={'end'} gap={'200'}>
       <div style={{ flex: 1 }}>

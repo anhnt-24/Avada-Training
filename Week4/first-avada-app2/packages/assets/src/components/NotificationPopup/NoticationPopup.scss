@@ -2,13 +2,11 @@
   position: relative;
   z-index: 99;
   color: #333;
-  max-width: 270px;
-  /* Shadow */
+  width: 270px;
 }
 
 .Avava-SP__Wrapper .Avava-SP__LinkWrapper {
   color: #333;
-  display: flex;
   align-items: center;
   text-decoration: none;
 }
@@ -73,9 +71,6 @@
   width: -moz-calc(100% - 75px);
   width: -webkit-calc(100% - 75px);
   padding-left: 15px;
-  white-space: nowrap; /* quan trọng: không xuống dòng */
-  overflow: hidden; /* nếu text dài quá thì ẩn */
-  text-overflow: ellipsis;
 }
 
 .Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Title {
@@ -111,3 +106,15 @@
   white-space: normal;
 }
 
+.Avada-SP__Close-icon {
+  position: absolute;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 100%;
+  right: 6px;
+  top: 2px;
+}
+
+.Avada-SP__Close-icon:hover {
+  color: red;
+}

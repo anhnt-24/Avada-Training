@@ -1,8 +1,9 @@
 import { Firestore } from '@google-cloud/firestore'
 import { formatDateFields } from '@avada/firestore-utils'
+import formatRelativeTime from '@functions/helpers/datetime/formatRelativeTime'
 
 const firestore = new Firestore()
-const collection = firestore.collection('Notifications')
+const collection = firestore.collection('salePopsNotifications')
 
 /**
  *
@@ -10,7 +11,11 @@ const collection = firestore.collection('Notifications')
  */
 export async function getNotificationsByShop (shopifyDomain) {
   const snapshot = await collection.where('shopifyDomain', '==', shopifyDomain).get()
-  return snapshot.docs.map(doc => ({ id: doc.id, ...formatDateFields(doc.data()) }))
+  return snapshot.docs.map(doc => ({
+    id: doc.id, ...formatDateFields(doc.data()),
+    relativeTime: formatRelativeTime(doc.data().createdAt)
+
+  }))
 }
 
 /**
@@ -39,6 +44,8 @@ export async function createNotification (data) {
   return {
     id: snapshot.id,
     ...formatDateFields(snapshot.data()),
+    relativeTime: formatRelativeTime(snapshot.data().createdAt)
+
   }
 }
 
@@ -60,20 +67,19 @@ export async function createManyNotifications (notifications) {
       })
       createdRefs.push(ref)
     })
-
     await batch.commit()
 
-    const createdData = await Promise.all(
+    return await Promise.all(
       createdRefs.map(async (ref) => {
         const snapshot = await ref.get()
         return {
           id: snapshot.id,
-          ...formatDateFields(snapshot.data())
+          ...formatDateFields(snapshot.data()),
+          relativeTime: formatRelativeTime(snapshot.data().createdAt)
         }
       })
     )
 
-    return createdData
   } catch (error) {
     console.error('error:', error)
     return []

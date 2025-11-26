@@ -5,7 +5,7 @@ import NotFound from '@assets/loadables/NotFound/NotFound'
 import Settings from '@assets/loadables/Settings/Settings'
 import { routePrefix } from '@assets/config/app'
 import Loading from '@assets/components/Loading'
-import Notifications from '@assets/pages/Notifications/Notifications'
+import SalePopsNotifications from '@assets/pages/SalePopsNotifications/SalePopsNotifications'
 import AnnouncementBarList from '@assets/pages/AnnoucementBarList/AnnouncemenBartList'
 import AnnouncementBarForm from '@assets/pages/AnnouncementBarForm/AnnouncementBarForm'
 
@@ -17,7 +17,7 @@ const Routes = ({ prefix = routePrefix }) => (
       <Route exact path={prefix + '/'} component={Home}/>
       <Route exact path={prefix + '/settings'} component={Settings}/>
       <Route exact path={prefix + '/fullscreen-page-a'} component={FullscreenPageA}/>
-      <Route exact path={prefix + '/notifications'} component={Notifications}/>
+      <Route exact path={prefix + '/notifications'} component={SalePopsNotifications}/>
       <Route exact path={prefix + '/announcements'} component={AnnouncementBarList}/>
       <Route exact path={prefix + '/announcements/create'} component={AnnouncementBarForm}/>
       <Route exact path={prefix + '/announcements/:id'} component={AnnouncementBarForm}/>

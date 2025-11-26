@@ -1,5 +1,5 @@
-import React from 'react';
+import React from 'react'
 
-const SettingLoadable = React.lazy(() => import('../../pages/Settings/Settings'));
+const SettingLoadable = React.lazy(() => import('../../pages/SalePopsSettings/./SalePopsSettings'))
 
-export default SettingLoadable;
+export default SettingLoadable

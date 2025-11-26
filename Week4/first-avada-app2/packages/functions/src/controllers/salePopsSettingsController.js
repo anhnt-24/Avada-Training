@@ -1,4 +1,8 @@
-import { getSettingByShopDomain, updateSetting } from '@functions/repositories/settingRepository'
+import {
+  getSettingByShopDomain,
+  toggleActive,
+  updateSalePopsSettings
+} from '@functions/repositories/salePopsSettingsRepository'
 
 /**
  * @param ctx
@@ -30,8 +34,8 @@ export async function updateSetting (ctx) {
   try {
     const shopifyDomain = ctx.state.shopify.shop
     const inputData = ctx.req.body
-    const updatedSetting = await updateSetting(shopifyDomain, inputData)
-    console.log(updatedSetting)
+    const updatedSetting = await updateSalePopsSettings(shopifyDomain, inputData)
+
     ctx.body = {
       data: updatedSetting,
       success: !!updatedSetting,
@@ -42,6 +46,26 @@ export async function updateSetting (ctx) {
     ctx.body = {
       data: {},
       shopData: {},
+      success: false,
+      message: e.message || 'Internal server error',
+    }
+  }
+}
+
+/**
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+export async function toggleActiveSetting (ctx) {
+  try {
+    const shopifyDomain = ctx.state.shopify.shop
+    await toggleActive(shopifyDomain)
+    ctx.body = {
+      success: true,
+    }
+  } catch (e) {
+    console.error(e)
+    ctx.body = {
       success: false,
       message: e.message || 'Internal server error',
     }
