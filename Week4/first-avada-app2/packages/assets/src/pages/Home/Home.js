@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { BlockStack, Button, Card, InlineStack, Layout, Page, Text } from '@shopify/polaris'
+import { Banner, BlockStack, Button, Card, InlineStack, Layout, Page, Text } from '@shopify/polaris'
 import { MaxModalContext } from '@assets/contexts/maxModalContext'
 import { Link } from 'react-router-dom'
 
@@ -33,6 +33,15 @@ export default function Home () {
                 </Button>
               </InlineStack>
             </Card>
+
+            <Banner
+              tone="warning"
+              title="This app is not activated yet"
+              action={{ content: 'Activate' }}
+              secondaryAction={{ content: 'I have done it' }}
+            >
+              Please activate the app by clicking 'Activate' button and then 'Save' in the following page.
+            </Banner>
             {/*<Card>*/}
             {/*  <InlineStack gap="200" blockAlign="center">*/}
             {/*    <Text as="span">Fullscreen</Text>*/}

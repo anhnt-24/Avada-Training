@@ -35,14 +35,14 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
       />
 
       <Checkbox
-        label="Hide close icon"
-        checked={form.hideCloseIcon}
-        onChange={(value) => updateFormKey('hideCloseIcon', value)}
+        label="Close icon"
+        checked={form.closeIcon}
+        onChange={(value) => updateFormKey('closeIcon', value)}
         helpText={' If enabled, customers can close the sale popup after a certain interval.  \n' +
           '  This prevents the popup from bothering them.'}
       />
 
-      {form.hideCloseIcon && (
+      {form.closeIcon && (
         <Slider
           label="Hide pops after"
           value={form.hidePopsAfter}

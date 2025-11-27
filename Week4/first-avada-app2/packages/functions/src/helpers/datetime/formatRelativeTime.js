@@ -1,7 +1,6 @@
 import moment from 'moment'
-import 'moment/locale/vi'
 
-moment.locale('vi')
+moment.locale('en')
 
 export default function formatRelativeTime (datetime) {
   const relativeTime = datetime.toDate()

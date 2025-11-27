@@ -121,6 +121,8 @@ export default function SalePopsNotifications () {
       ]}
     >
       <BlockStack gap={'400'}>
+
+
         {isShowSyncBanner && (
           <Banner
             title="If orders are not up to date"

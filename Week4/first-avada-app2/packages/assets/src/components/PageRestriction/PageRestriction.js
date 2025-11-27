@@ -1,7 +1,7 @@
-import { BlockStack, Box, Checkbox, ChoiceList, Divider, Text, TextField } from '@shopify/polaris'
+import { BlockStack, Box, Checkbox, ChoiceList, Text } from '@shopify/polaris'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RESTRICTION_OPTIONS } from '@assets/const/salePopsSettings'
+import { RESTRICTION_OPTIONS, SPECIFIC_PAGES } from '@assets/const/salePopsSettings'
 
 export default function PageRestriction ({ form, updateFormKey }) {
   const selectedPages = [form.allowShow]
@@ -33,17 +33,11 @@ export default function PageRestriction ({ form, updateFormKey }) {
               Select specific pages where sales pop should appear
             </Text>
             <BlockStack>
-              {[
-                { label: 'Homepage', key: 'homepage' },
-                { label: 'Product pages', key: 'productPages' },
-                { label: 'Collection pages', key: 'collectionPages' },
-                { label: 'Cart pages', key: 'cartPages' },
-                { label: 'Blog pages', key: 'blogPages' },
-              ].map((item) => (
+              {SPECIFIC_PAGES.map((item) => (
                 <Checkbox
                   key={item.key}
                   label={item.label}
-                  checked={form.specificPages?.[item.key] || false}
+                  checked={form.specificPages?.[item.key]}
                   onChange={handleSpecificPageCheckboxChange(item.key)}
                 />
               ))}
@@ -52,28 +46,28 @@ export default function PageRestriction ({ form, updateFormKey }) {
         )}
       </Box>
 
-      <Divider></Divider>
-      <Text variant="headingMd" as="h3">
-        You can also use some link
-      </Text>
+      {/*<Divider></Divider>*/}
+      {/*<Text variant="headingMd" as="h3">*/}
+      {/*  You can also use some link*/}
+      {/*</Text>*/}
 
-      <TextField
-        label="Included pages"
-        type="text"
-        value={form.includedUrls || ''}
-        onChange={(value) => updateFormKey('includedUrls', value)}
-        multiline={4}
-        helpText="Page URLs to show the pop-up (separated by new lines)"
-      />
+      {/*<TextField*/}
+      {/*  label="Included pages"*/}
+      {/*  type="text"*/}
+      {/*  value={form.includedUrls || ''}*/}
+      {/*  onChange={(value) => updateFormKey('includedUrls', value)}*/}
+      {/*  multiline={4}*/}
+      {/*  helpText="Page URLs to show the pop-up (separated by new lines)"*/}
+      {/*/>*/}
 
-      <TextField
-        label="Excluded pages"
-        type="text"
-        value={form.excludedUrls || ''}
-        onChange={(value) => updateFormKey('excludedUrls', value)}
-        multiline={4}
-        helpText="Page URLs NOT to show the pop-up (separated by new lines)"
-      />
+      {/*<TextField*/}
+      {/*  label="Excluded pages"*/}
+      {/*  type="text"*/}
+      {/*  value={form.excludedUrls || ''}*/}
+      {/*  onChange={(value) => updateFormKey('excludedUrls', value)}*/}
+      {/*  multiline={4}*/}
+      {/*  helpText="Page URLs NOT to show the pop-up (separated by new lines)"*/}
+      {/*/>*/}
     </BlockStack>
   )
 }

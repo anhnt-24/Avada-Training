@@ -34,15 +34,14 @@ api.use(
     optionalScopes: shopifyOptionalScopes,
     accessTokenKey: shopifyConfig.accessTokenKey,
     afterLogin: async ctx => {
+    },
+    afterInstall: async ctx => {
       const shopifyDomain = ctx.state.shopify.shop
       const shopData = await getShopByShopifyDomain(shopifyDomain)
       await Promise.all([
         registerWebhook(shopData),
         syncOrdersAndSetting(shopifyDomain, shopData),
       ])
-    },
-    afterInstall: async ctx => {
-
     },
     initialPlan: {
       id: 'free',

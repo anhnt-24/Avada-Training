@@ -2,26 +2,43 @@ import { insertAfter } from '../helpers/insertHelpers'
 import { render } from 'preact'
 import NotificationPopup from '../components/NotificationPopup/NotificationPopup'
 
+const NOTIFICATIONS_HIDE_UNTIL = 'notificationsHideUntil'
+const SALEPOPS_INDEX = 'salePopsIndex'
+
 export default class DisplayManager {
+
   constructor () {
     this.notifications = []
     this.settings = {}
     this.currentIndex = 0
     this.timer = null
+    this.currentPage = window.ShopifyAnalytics.meta.page.pageType
+    this.isClose = false
   }
 
   async initialize ({ notifications, settings }) {
     this.notifications = notifications
     this.settings = settings
-
-    if (settings.continueAfterReload) {
-      const saved = localStorage.getItem('salepop_index')
-      if (saved) this.currentIndex = parseInt(saved)
-    }
+    if (!this.shouldShow()) return
+    this.setFilteredNotifications()
+    this.setMaxPopsDisplay()
+    this.setIndexAfterReload()
     this.insertContainer()
     this.setPosition()
     await new Promise(r => setTimeout(r, settings.firstDelay * 1000))
     this.showNext()
+  }
+
+  setIndexAfterReload () {
+    if (this.settings.continueAfterReload) {
+      const saved = localStorage.getItem(SALEPOPS_INDEX)
+      const index = parseInt(saved)
+      if (isNaN(index) || index >= this.notifications.length) {
+        this.currentIndex = 0
+      } else {
+        this.currentIndex = index
+      }
+    }
   }
 
   insertContainer () {
@@ -46,24 +63,21 @@ export default class DisplayManager {
     s.right = pos.includes('right') ? '20px' : 'auto'
   }
 
-  // getFilteredNotifications () {
-  //   let list = [...this.notifications]
-  //
-  //   if (this.settings.basedOnProductView) {
-  //     const handle = window.location.pathname.split('/products/')[1]
-  //     // if (handle) {
-  //     //   list = list.filter(
-  //     //     n => n.productHandle === handle || n.productUrl?.includes(handle)
-  //     //   )
-  //     // }
-  //   }
-  //
-  //   return list
-  // }
+  setFilteredNotifications () {
+    if (this.settings.basedOnProductView && this.currentPage === 'product') {
+      const handle = window.location.pathname.replace('/products/', '')
+      if (handle) {
+        this.notifications = this.notifications.filter(
+          n => n.productHandle === handle
+        )
+      }
+    }
+  }
+
   setMaxPopsDisplay () {
     const max = this.settings.maxPopsDisplay
     if (this.notifications.length > max)
-      this.notifications = this.notifications.slice(0, max)
+      this.notifications = [...this.notifications.slice(0, max)]
   }
 
   getNextNotification () {
@@ -71,9 +85,7 @@ export default class DisplayManager {
       return this.notifications[Math.floor(Math.random() * this.notifications.length)]
     }
 
-    const item = this.notifications[this.currentIndex % this.notifications.length]
-    this.currentIndex++
-    return item
+    return this.notifications[this.currentIndex % this.notifications.length]
   }
 
   showNext () {
@@ -81,41 +93,55 @@ export default class DisplayManager {
       if (this.settings.replayPlaylist) this.currentIndex = 0
       else return
     }
-
+    if (this.isClose) {
+      return
+    }
     const notification = this.getNextNotification()
+    this.currentIndex++
     const duration = this.settings.displayDuration * 1000
     const interval = this.settings.popsInterval * 1000
-
     const popupDiv = document.createElement('div')
     this.container.appendChild(popupDiv)
+    const productLink = window.location.origin + '/products/' + notification.productHandle
+
     render(
       <NotificationPopup
         {...notification}
         settings={this.settings}
-        productName={
-          this.settings.truncateProductName && notification.productName
-            ? notification.productName.length > 30
-              ? notification.productName.substring(0, 27) + '...'
-              : notification.productName
-            : notification.productName
-        }
+        productLink={productLink}
+        onClose={this.onClose.bind(this)}
       />,
       popupDiv
     )
 
     setTimeout(() => {
-      popupDiv.classList.add('fade-out-up')
+      popupDiv.classList.add('Fade-Out-Up')
       setTimeout(() => {
         popupDiv.remove()
         if (this.settings.continueAfterReload) {
-          localStorage.setItem('salepop_index', this.currentIndex)
+          localStorage.setItem(SALEPOPS_INDEX, this.currentIndex)
         }
-        this.timer = setTimeout(() => this.showNext(), interval)
+        setTimeout(() => this.showNext(), interval)
       }, 500)
     }, duration)
   }
 
-  stop () {
-    if (this.timer) clearTimeout(this.timer)
+  shouldShow () {
+    if (!this.settings.isActive) return false
+    const hideUntil = Number(localStorage.getItem(NOTIFICATIONS_HIDE_UNTIL))
+    if (hideUntil && Date.now() < hideUntil) {
+      return false
+    }
+    if (this.settings.allowShow === 'all') return true
+    if (this.settings.allowShow === this.currentPage) return true
+    return this.settings.allowShow === 'specific' && this.settings.specificPages[this.currentPage]
+  }
+
+  onClose (e) {
+    e.stopPropagation()
+    e.preventDefault()
+    this.isClose = true
+    const hideUntil = Date.now() + this.settings.hidePopsAfter * 60 * 60 * 1000
+    localStorage.setItem(NOTIFICATIONS_HIDE_UNTIL, hideUntil)
   }
 }
