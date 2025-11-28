@@ -8,6 +8,7 @@ import SalePopsPreview from '@assets/components/SalePopsPreview/SalePopsPreview'
 import LoadingSkeletonPage from '@assets/components/LoadingSkeletonPage/LoadingSkeletonPage'
 import useFetchApi from '@assets/hooks/api/useFetchApi'
 import useEditApi from '@assets/hooks/api/useEditApi'
+import { useHistory } from 'react-router-dom'
 
 export default function SalePopsSettings () {
   const shopify = useAppBridge()
@@ -15,6 +16,7 @@ export default function SalePopsSettings () {
   const { handleEdit, editing } = useEditApi({ url: '/settings' })
   const [selectedTab, setSelectedTab] = useState(0)
   const [initialForm, setInitialForm] = useState(null)
+  const history = useHistory()
   const SAVE_BAR_ID = 'my-save-bar'
   const updateFormKey = (key, value) => {
     setData(prev => ({ ...prev, [key]: value }))
@@ -37,8 +39,10 @@ export default function SalePopsSettings () {
   }
 
   useEffect(() => {
+    if (form && !initialForm) {
+      setInitialForm(form)
+    }
     if (!initialForm) return
-
     const isChanged = JSON.stringify(form) !== JSON.stringify(initialForm)
 
     if (isChanged) {
@@ -48,11 +52,10 @@ export default function SalePopsSettings () {
     }
   }, [form, initialForm])
 
-  useEffect(() => {
-    if (form && !initialForm) {
-      setInitialForm(form)
-    }
-  }, [form, initialForm])
+  async function handleBackAction () {
+    await shopify.saveBar.leaveConfirmation()
+    history.push('/notifications')
+  }
 
   const tabs = [
     { id: 'display', content: 'Display', contentJsx: <PopUpDisplaySetting form={form} updateFormKey={updateFormKey}/> },
@@ -60,10 +63,9 @@ export default function SalePopsSettings () {
   ]
 
   if (loading) return <LoadingSkeletonPage/>
-
   return (
     <Page title="Sale Pops settings" subtitle="Decide how your notifications will display"
-          backAction={{ url: '/notifications' }}>
+          backAction={{ onAction: handleBackAction }}>
       <Layout>
         <Layout.Section>
           <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange}/>
