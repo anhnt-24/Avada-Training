@@ -1,55 +1,54 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import { Banner, BlockStack, Button, Card, InlineStack, Layout, Page, Text } from '@shopify/polaris'
-import { MaxModalContext } from '@assets/contexts/maxModalContext'
-import { Link } from 'react-router-dom'
+import generateShopifyEditorDeepLink from '@assets/helpers/generateShopifyEditorDeepLink'
+import { useAppBridge } from '@shopify/app-bridge-react'
+import useFetchApi from '@assets/hooks/api/useFetchApi'
+import LoadingSkeletonPage from '@assets/components/LoadingSkeletonPage/LoadingSkeletonPage'
 
-/**
- * Render a home page for overview
- *
- * @return {React.ReactElement}
- * @constructor
- */
 export default function Home () {
-  const [enabled, setEnabled] = useState(false)
-  const { openFullscreen } = useContext(MaxModalContext)
-
+  const shopify = useAppBridge()
+  const activeExtensionLink = generateShopifyEditorDeepLink({ shopDomain: shopify.config.shop })
+  const { data, setData, loading } = useFetchApi({
+    url: '/extension/is-disabled',
+    defaultData: { isDisabled: false }
+  })
+  const isDisabled = data.isDisabled
+  const handleEnabled = () => setData({ isDisabled: true })
+  if (loading) return <LoadingSkeletonPage></LoadingSkeletonPage>
   return (
     <Page title="Home">
       <Layout>
         <Layout.Section>
           <BlockStack gap="400">
             <Card>
-              <Link to={'/notifications'}>notidca</Link>
               <InlineStack blockAlign="center">
-                <Text as="span">App status is <strong>
-                  {enabled ? 'enabled' : 'disabled'}
+                <Text as="span">Your app <strong>
+                  {!isDisabled ? 'Enabled' : 'Disabled'}
                 </strong> </Text>
                 <div style={{ flex: 1 }}/>
-                <Button
-                  variant={enabled ? 'secondary' : 'primary'}
-                  onClick={() => setEnabled(prev => !prev)}
-                >
-                  {enabled ? 'Disable' : 'Enable'}
-                </Button>
+                {isDisabled &&
+                  <Button
+                    variant={'primary'}
+                    onClick={() => window.open(activeExtensionLink, '_blank')}
+                  >
+                    Enable
+                  </Button>
+                }
+
               </InlineStack>
             </Card>
+            {isDisabled &&
+              <Banner
+                tone="warning"
+                title="This app is not activated yet"
+                action={{ content: 'Activate', onAction: () => window.open(activeExtensionLink, '_blank') }}
+                secondaryAction={{ content: 'I have done it', onAction: handleEnabled }}
+                onDismiss={handleEnabled}
+              >
+                Please activate the app by clicking 'Activate' button and then 'Save' in the following page.
+              </Banner>
+            }
 
-            <Banner
-              tone="warning"
-              title="This app is not activated yet"
-              action={{ content: 'Activate' }}
-              secondaryAction={{ content: 'I have done it' }}
-            >
-              Please activate the app by clicking 'Activate' button and then 'Save' in the following page.
-            </Banner>
-            {/*<Card>*/}
-            {/*  <InlineStack gap="200" blockAlign="center">*/}
-            {/*    <Text as="span">Fullscreen</Text>*/}
-            {/*    <Button onClick={() => openFullscreen('/samples')}>Samples</Button>*/}
-            {/*    <Button onClick={() => openFullscreen('/settings')}>SalePopsSettings</Button>*/}
-            {/*    <Button url="/fullscreen-page-a">Fullscreen page a</Button>*/}
-            {/*  </InlineStack>*/}
-            {/*</Card>*/}
           </BlockStack>
         </Layout.Section>
       </Layout>

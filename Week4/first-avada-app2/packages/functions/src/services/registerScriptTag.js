@@ -14,11 +14,9 @@ export async function registerScriptTag (shopData) {
   const alreadyRegistered = existingTags.some(tag => tag.src === srcUrl)
 
   if (alreadyRegistered) {
-    console.log('ScriptTag đã tồn tại, không tạo lại')
     return null
   }
 
-  console.log('Đăng ký ScriptTag mới')
   return await shopify.scriptTag.create({
     event: 'onload',
     src: srcUrl

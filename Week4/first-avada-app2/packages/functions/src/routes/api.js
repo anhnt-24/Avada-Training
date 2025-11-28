@@ -7,6 +7,7 @@ import { getApiPrefix } from '@functions/const/app'
 import * as salePopsSettingsController from '@functions/controllers/salePopsSettingsController'
 import * as salePopsNotificationController from '@functions/controllers/salePopsNotificationsController'
 import * as announcementController from '@functions/controllers/anouncementBarController'
+import * as extensionController from '@functions/controllers/extensionController'
 
 export default function apiRouter (isEmbed = false) {
   const router = new Router({ prefix: getApiPrefix(isEmbed) })
@@ -35,5 +36,8 @@ export default function apiRouter (isEmbed = false) {
   router.put('/announcements/:id/toggle-published', announcementController.togglePublished)
   router.put('/announcements/:id', announcementController.update)
   router.delete('/announcements/:id', announcementController.remove)
+
+  router.get('/extension/is-disabled', extensionController.checkExtensionEnabled)
+
   return router
 }

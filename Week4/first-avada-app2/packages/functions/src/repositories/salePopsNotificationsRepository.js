@@ -33,8 +33,8 @@ export async function createNotification (data) {
     .orderBy('createdAt', 'desc')
     .get()
 
-  if (snapshots.size > 30) {
-    const extra = snapshots.docs.slice(30)
+  if (snapshots.size > 45) {
+    const extra = snapshots.docs.slice(45)
 
     const batch = firestore.batch()
     extra.forEach((doc) => batch.delete(doc.ref))

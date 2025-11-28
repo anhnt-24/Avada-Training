@@ -1,0 +1,20 @@
+query GetSettingsDataJson {
+  themes(first:10) {
+    edges{
+      node{
+        id
+        name
+        files(filenames: ["config/settings_data.json"], first: 1) {
+          nodes {
+            body {
+              ... on OnlineStoreThemeFileBodyText {
+                content
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+}

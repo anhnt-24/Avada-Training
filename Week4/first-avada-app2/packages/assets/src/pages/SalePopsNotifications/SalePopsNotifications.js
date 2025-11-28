@@ -10,23 +10,31 @@ import {
   useIndexResourceState,
   useSetIndexFiltersMode,
 } from '@shopify/polaris'
-import { useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
 import useFetchApi from '@assets/hooks/api/useFetchApi'
 import { DeleteIcon } from '@shopify/polaris-icons'
 import useDeleteApi from '@assets/hooks/api/useDeleteApi'
 import useCreateApi from '@assets/hooks/api/useCreateApi'
 import useEditApi from '@assets/hooks/api/useEditApi'
+import { formatDateOnly } from '@assets/helpers/utils/formatFullTime'
 
 export default function SalePopsNotifications () {
-  const { data: notifications, loading, setData: setNotifications } = useFetchApi({ url: '/notifications' })
-  const { data: salePopsSettingsData, setData: setSalePopsSettingsData } = useFetchApi({ url: '/settings' })
+  const {
+    data: notifications,
+    loading: loadingNotifications,
+    setData: setNotifications
+  } = useFetchApi({ url: '/notifications' })
+  const {
+    data: salePopsSettingsData,
+    loading: loadingSettings,
+    setData: setSalePopsSettingsData
+  } = useFetchApi({ url: '/settings' })
   const { editing: activating, handleEdit: handleActive } = useEditApi({ url: '/settings/active' })
   const { handleDelete, deleting } = useDeleteApi({ url: '/notifications/delete' })
   const { handleCreate, creating } = useCreateApi({ url: '/notifications/sync-orders', fullResp: true })
   const [isShowSyncBanner, setIsShowSyncBanner] = useState(true)
-  const handleSortChange = useCallback((value) => setSortSelected(value), [])
-  const [sortSelected, setSortSelected] = useState('date-created asc')
+  const [sortSelected, setSortSelected] = useState(['date desc'])
   const { mode, setMode } = useSetIndexFiltersMode()
   const { selectedResources, allResourcesSelected, handleSelectionChange, clearSelection } =
     useIndexResourceState(notifications)
@@ -66,12 +74,13 @@ export default function SalePopsNotifications () {
       console.error('Error syncing orders:', error)
     }
   }
+  const loading = loadingSettings || loadingNotifications
 
   const resourceName = { singular: 'notification', plural: 'notifications' }
 
   const sortOptions = [
-    { label: 'Date created', value: 'date-created asc', directionLabel: 'Ascending' },
-    { label: 'Date created', value: 'date-created desc', directionLabel: 'Descending' },
+    { label: 'Date created', value: 'date asc', directionLabel: 'Ascending' },
+    { label: 'Date created', value: 'date desc', directionLabel: 'Descending' },
   ]
   const promotedBulkActions = [
     {
@@ -93,14 +102,26 @@ export default function SalePopsNotifications () {
         <NotificationPopup settings={salePopsSettingsData} {...item}/>
       </IndexTable.Cell>
       <IndexTable.Cell>
-        <Text>{new Date(item.timestamp).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}</Text>
+        <Text>{formatDateOnly(item.timestamp)}</Text>
       </IndexTable.Cell>
     </IndexTable.Row>
   ))
+
+  useEffect(() => {
+    if (!notifications || notifications.length === 0) return
+    const sorted = [...notifications].sort((a, b) => {
+      const t1 = new Date(a.timestamp).getTime()
+      const t2 = new Date(b.timestamp).getTime()
+      if (sortSelected[0] === 'date desc') {
+        return t2 - t1
+      }
+      if (sortSelected[0] === 'date asc') {
+        return t1 - t2
+      }
+      return 0
+    })
+    setNotifications(sorted)
+  }, [sortSelected])
 
   return (
     <Page
@@ -113,7 +134,7 @@ export default function SalePopsNotifications () {
           content: !salePopsSettingsData.isActive ? 'Active' : 'Disable',
           onAction: bulkHandleToggleActive,
           destructive: salePopsSettingsData.isActive,
-          loading: activating,
+          loading: activating || loading,
         }
       }
       secondaryActions={[{ content: 'Settings', url: '/settings' },
@@ -142,7 +163,8 @@ export default function SalePopsNotifications () {
           <IndexFilters
             sortOptions={sortOptions}
             sortSelected={sortSelected}
-            onSort={handleSortChange}
+            onSort={setSortSelected}
+
             primaryAction={{
               content: 'Delete selected',
               onAction: () => console.log('Delete', selectedResources),
