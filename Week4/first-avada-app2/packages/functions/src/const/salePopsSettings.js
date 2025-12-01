@@ -3,7 +3,7 @@ export const salePopsSettings = {
   hideTimeAgo: true,
   truncateProductName: true,
   fontFamily: 'Arial',
-  hideCloseIcon: false,
+  closeIcon: false,
   hidePopsAfter: 1,
 
   displayDuration: 3,
@@ -16,11 +16,20 @@ export const salePopsSettings = {
   allowShow: 'specific',
 
   specificPages: {
-    homepage: true,
-    productPages: true,
-    collectionPages: true,
-    cartPages: true,
-    blogPages: true,
+    home: true,
+    product: true,
+    collection: true,
+    cart: true,
+    blog: true,
+  },
+
+  specificProducts: {
+    type: 'all',
+    list: []
+  },
+  specificCollections: {
+    type: 'all',
+    list: []
   },
 
   displayMethod: 'randomly',
@@ -36,7 +45,14 @@ export const DISPLAY_METHOD_OPTIONS = [
 ]
 export const RESTRICTION_OPTIONS = [
   { label: 'All pages', value: 'all' },
-  { label: 'Home page only', value: 'homePageOnly' },
+  { label: 'Home page only', value: 'home' },
   { label: 'Specific page', value: 'specific' },
+]
+export const SPECIFIC_PAGES = [
+  { label: 'Homepage', value: 'home' },
+  { label: 'Product pages', value: 'product' },
+  { label: 'Collection pages', value: 'collection' },
+  { label: 'Cart pages', value: 'cart' },
+  { label: 'Blog pages', value: 'blog' },
 ]
 

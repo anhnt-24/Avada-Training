@@ -38,6 +38,7 @@ api.use(
       const shopifyDomain = ctx.state.shopify.shop
       const shopData = await getShopByShopifyDomain(shopifyDomain)
       await registerWebhook(shopData)
+
     },
     afterInstall: async ctx => {
       const shopifyDomain = ctx.state.shopify.shop

@@ -14,7 +14,7 @@ export default class DisplayManager {
     this.settings = {}
     this.currentIndex = 0
     this.timer = null
-    this.currentPage = window.ShopifyAnalytics.meta.page.pageType
+    this.currentPage = window.ShopifyAnalytics.meta.page
     this.isClose = false
   }
 
@@ -41,8 +41,17 @@ export default class DisplayManager {
       return false
     }
     if (this.settings.allowShow === 'all') return true
-    if (this.settings.allowShow === this.currentPage) return true
-    return this.settings.allowShow === 'specific' && this.settings.specificPages[this.currentPage]
+    if (this.settings.allowShow === this.currentPage.pageType) return true
+    if (this.settings.allowShow === 'specific' && this.settings.specificPages[this.currentPage.pageType]) {
+      if (this.currentPage.pageType === 'product' && this.settings.specificProducts.type === 'specific'
+        && !this.settings.specificProducts.list.includes(`gid://shopify/Product/${this.currentPage.resourceId}`)
+      ) return false
+      if (this.currentPage.pageType === 'collection' && this.settings.specificCollections.type === 'specific'
+        && !this.settings.specificCollections.list.includes(`gid://shopify/Collection/${this.currentPage.resourceId}`))
+        return false
+      return true
+    }
+    return false
   }
 
   insertContainer () {
@@ -57,12 +66,13 @@ export default class DisplayManager {
   }
 
   setFilteredNotifications () {
-    if (this.settings.basedOnProductView && this.currentPage === 'product') {
+    if (this.settings.basedOnProductView && this.currentPage.pageType === 'product') {
       const handle = window.location.pathname.replace('/products/', '')
       if (handle) {
         this.notifications = this.notifications.filter(
           n => n.productHandle === handle
         )
+
       }
     }
   }
@@ -112,9 +122,9 @@ export default class DisplayManager {
       }
       const notification = this.getNextNotification()
       this.currentIndex++
-      const popupDiv = this.displayPopup(notification)
+      this.displayPopup(notification)
       await this.sleep(duration)
-      await this.fadeOut(popupDiv)
+      await this.fadeOut()
       await this.sleep(interval)
       if (this.settings.continueAfterReload) {
         localStorage.setItem(STORAGE_KEYS.restoreIndex, this.currentIndex)
@@ -123,8 +133,8 @@ export default class DisplayManager {
   }
 
   displayPopup (notification) {
-    const popupDiv = document.createElement('div')
-    this.container.appendChild(popupDiv)
+    this.popupDiv = document.createElement('div')
+    this.container.appendChild(this.popupDiv)
     const productLink = window.location.origin + '/products/' + notification.productHandle
     render(
       <NotificationPopup
@@ -133,23 +143,22 @@ export default class DisplayManager {
         productLink={productLink}
         onClose={this.onClose.bind(this)}
       />,
-      popupDiv
+      this.popupDiv
     )
-    return popupDiv
   }
 
-  async fadeOut (popupDiv) {
+  async fadeOut () {
     const wrapper = document.querySelector('.Avava-SP__Wrapper')
     if (wrapper) wrapper.classList.add('Fade-Out-Up')
     await this.sleep(1000)
-    popupDiv.remove()
-
+    this.popupDiv.remove()
   }
 
   onClose (e) {
     e.stopPropagation()
     e.preventDefault()
     this.isClose = true
+    this.popupDiv.remove()
     const hideUntil = Date.now() + this.settings.hidePopsAfter * 60 * 60 * 1000
     localStorage.setItem(STORAGE_KEYS.hideUntil, hideUntil)
   }

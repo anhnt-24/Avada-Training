@@ -23,6 +23,15 @@ export const salePopsSettings = {
     blog: true,
   },
 
+  specificProducts: {
+    type: 'all',
+    list: []
+  },
+  specificCollections: {
+    type: 'all',
+    list: []
+  },
+
   displayMethod: 'randomly',
   replayPlaylist: false,
   continueAfterReload: false,
@@ -40,10 +49,10 @@ export const RESTRICTION_OPTIONS = [
   { label: 'Specific page', value: 'specific' },
 ]
 export const SPECIFIC_PAGES = [
-  { label: 'Homepage', key: 'home' },
-  { label: 'Product pages', key: 'product' },
-  { label: 'Collection pages', key: 'collection' },
-  { label: 'Cart pages', key: 'cart' },
-  { label: 'Blog pages', key: 'blog' },
+  { label: 'Homepage', value: 'home' },
+  { label: 'Product pages', value: 'product' },
+  { label: 'Collection pages', value: 'collection' },
+  { label: 'Cart pages', value: 'cart' },
+  { label: 'Blog pages', value: 'blog' },
 ]
 

@@ -98,52 +98,56 @@ export default function PopUpDisplaySetting ({ form, updateFormKey }) {
       </BlockStack>
       <Divider/>
       <Text variant="headingMd" as="h3">Sales Pop Strategy</Text>
-      <ChoiceList
-        title="Display by"
-        choices={DISPLAY_METHOD_OPTIONS}
-        selected={[form.displayMethod]}
-        onChange={(selected) => updateFormKey('displayMethod', selected[0])}
-      />
+      <BlockStack gap={'200'}>
 
-      <Checkbox
-        label={
-          <Text as="span" fontWeight="regular">
-            Replay playlist
-            <Text as="p" variant="bodySm" tone={'subdued'}>
-              If enabled, the playlist will be replayed when all items have been displayed.
-            </Text>
-          </Text>
-        }
-        checked={form.replayPlaylist}
-        onChange={(value) => updateFormKey('replayPlaylist', value)}
-      />
+        <ChoiceList
+          title="Display by"
+          choices={DISPLAY_METHOD_OPTIONS}
+          selected={[form.displayMethod]}
+          onChange={(selected) => updateFormKey('displayMethod', selected[0])}
+        />
 
-      <Checkbox
-        label={
-          <Text as="span" fontWeight="regular">
-            Continue after page reload
-            <Text as="p" variant="bodySm" tone={'subdued'}>
-              If enabled, after the page is reloaded, the next popup is displayed. If not, the list will be replayed
-              from the start.
+        <Checkbox
+          label={
+            <Text as="span" fontWeight="regular">
+              Replay playlist
+              <Text as="p" variant="bodySm" tone={'subdued'}>
+                If enabled, the playlist will be replayed when all items have been displayed.
+              </Text>
             </Text>
-          </Text>
-        }
-        checked={form.continueAfterReload}
-        onChange={(value) => updateFormKey('continueAfterReload', value)}
-      />
+          }
+          checked={form.replayPlaylist}
+          onChange={(value) => updateFormKey('replayPlaylist', value)}
+        />
 
-      <Checkbox
-        label={
-          <Text as="span" fontWeight="regular">
-            Based on product view
-            <Text as="p" variant="bodySm" tone="subdued">
-              If enabled, only display the popups regarding the product a customer is viewing.
+        <Checkbox
+          label={
+            <Text as="span" fontWeight="regular">
+              Continue after page reload
+              <Text as="p" variant="bodySm" tone={'subdued'}>
+                If enabled, after the page is reloaded, the next popup is displayed. If not, the list will be replayed
+                from the start.
+              </Text>
             </Text>
-          </Text>
-        }
-        checked={form.basedOnProductView}
-        onChange={(value) => updateFormKey('basedOnProductView', value)}
-      />
+          }
+          checked={form.continueAfterReload}
+          onChange={(value) => updateFormKey('continueAfterReload', value)}
+        />
+
+        <Checkbox
+          label={
+            <Text as="span" fontWeight="regular">
+              Based on product view
+              <Text as="p" variant="bodySm" tone="subdued">
+                If enabled, only display the popups regarding the product a customer is viewing.
+              </Text>
+            </Text>
+          }
+          checked={form.basedOnProductView}
+          onChange={(value) => updateFormKey('basedOnProductView', value)}
+        />
+      </BlockStack>
+
     </BlockStack>
   )
 }
