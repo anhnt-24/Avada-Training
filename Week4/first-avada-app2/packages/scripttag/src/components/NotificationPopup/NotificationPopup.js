@@ -14,7 +14,8 @@ const NotificationPopup = ({
 }) => {
   const truncateProductClass = settings.truncateProductName && 'Avada__Truncate'
   return (
-    <div className="Avava-SP__Wrapper Fade-In-Up animated" style={{ fontFamily: settings.fontFamily }}>
+    <div className={`Avava-SP__Wrapper Fade-In-Up animated ${settings.position}`}
+         style={{ fontFamily: settings.fontFamily }}>
       <div className="Avava-SP__Inner">
         <div className="Avava-SP__Container ">
           {settings.closeIcon &&

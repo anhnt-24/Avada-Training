@@ -8,9 +8,10 @@ import { getShopByShopifyDomain, verifyEmbedRequest } from '@avada/core'
 import shopifyConfig from '@functions/config/shopify'
 import appConfig from '@functions/config/app'
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes'
-import { syncOrdersAndSetting } from '@functions/services/orderService'
+import { syncOrders } from '@functions/services/orderService'
 import { registerWebhook } from '@functions/services/registerWebhook'
-
+import { salePopsSettings } from '@functions/const/salePopsSettings'
+import { createSetting } from '@functions/repositories/salePopsSettingsRepository'
 // Initialize all demand configuration for an application
 const api = new App()
 api.proxy = true
@@ -43,7 +44,8 @@ api.use(
       const shopData = await getShopByShopifyDomain(shopifyDomain)
       await Promise.all([
         registerWebhook(shopData),
-        syncOrdersAndSetting(shopifyDomain, shopData),
+        syncOrders(shopifyDomain, shopData),
+        createSetting(shopifyDomain, salePopsSettings)
       ])
     },
     initialPlan: {

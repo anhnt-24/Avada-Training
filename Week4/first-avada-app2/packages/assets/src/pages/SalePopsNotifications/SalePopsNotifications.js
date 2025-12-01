@@ -4,7 +4,10 @@ import {
   BlockStack,
   IndexFilters,
   IndexTable,
+  InlineStack,
   LegacyCard,
+  Link,
+  Modal,
   Page,
   Text,
   useIndexResourceState,
@@ -13,11 +16,12 @@ import {
 import { useEffect, useState } from 'react'
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
 import useFetchApi from '@assets/hooks/api/useFetchApi'
-import { DeleteIcon } from '@shopify/polaris-icons'
+import { DeleteIcon, ImportIcon } from '@shopify/polaris-icons'
 import useDeleteApi from '@assets/hooks/api/useDeleteApi'
 import useCreateApi from '@assets/hooks/api/useCreateApi'
 import useEditApi from '@assets/hooks/api/useEditApi'
 import { formatDateOnly } from '@assets/helpers/utils/formatFullTime'
+import UploadZone from '@assets/components/UploadZone/UploadZone'
 
 export default function SalePopsNotifications () {
   const {
@@ -38,6 +42,7 @@ export default function SalePopsNotifications () {
   const { mode, setMode } = useSetIndexFiltersMode()
   const { selectedResources, allResourcesSelected, handleSelectionChange, clearSelection } =
     useIndexResourceState(notifications)
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
   const paginatedNotifications = notifications.slice(
@@ -138,7 +143,7 @@ export default function SalePopsNotifications () {
         }
       }
       secondaryActions={[{ content: 'Settings', url: '/settings' },
-        { content: 'Import', onAction: () => 1 }
+        { content: 'Import', onAction: () => setIsUploadModalOpen(true), icon: ImportIcon }
       ]}
     >
       <BlockStack gap={'400'}>
@@ -203,6 +208,20 @@ export default function SalePopsNotifications () {
           >
             {rowMarkup}
           </IndexTable>
+          <Modal open={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)}
+                 title={'Upload your notifications here.'}>
+            <Modal.Section>
+              <BlockStack gap={'400'}>
+                <InlineStack gap={'100'}>
+                  <Text>Here is our</Text>
+                  <Link url={'#'}>sample.csv</Link>
+                </InlineStack>
+                <UploadZone></UploadZone>
+              </BlockStack>
+
+            </Modal.Section>
+          </Modal>
+
         </LegacyCard>
       </BlockStack>
     </Page>

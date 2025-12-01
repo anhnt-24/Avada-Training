@@ -2,8 +2,10 @@ import { insertAfter } from '../helpers/insertHelpers'
 import { render } from 'preact'
 import NotificationPopup from '../components/NotificationPopup/NotificationPopup'
 
-const NOTIFICATIONS_HIDE_UNTIL = 'notificationsHideUntil'
-const SALEPOPS_INDEX = 'salePopsIndex'
+const STORAGE_KEYS = {
+  hideUntil: 'notificationsHideUntil',
+  restoreIndex: 'salePopsIndex',
+}
 
 export default class DisplayManager {
 
@@ -20,25 +22,27 @@ export default class DisplayManager {
     this.notifications = notifications
     this.settings = settings
     if (!this.shouldShow()) return
+    await this.init()
+  }
+
+  async init () {
     this.setFilteredNotifications()
     this.setMaxPopsDisplay()
     this.setIndexAfterReload()
     this.insertContainer()
-    this.setPosition()
-    await new Promise(r => setTimeout(r, settings.firstDelay * 1000))
-    this.showNext()
+    await this.waitFirstDelay()
+    await this.startPopupLoop()
   }
 
-  setIndexAfterReload () {
-    if (this.settings.continueAfterReload) {
-      const saved = localStorage.getItem(SALEPOPS_INDEX)
-      const index = parseInt(saved)
-      if (isNaN(index) || index >= this.notifications.length) {
-        this.currentIndex = 0
-      } else {
-        this.currentIndex = index
-      }
+  shouldShow () {
+    if (!this.settings.isActive) return false
+    const hideUntil = Number(localStorage.getItem(STORAGE_KEYS.hideUntil))
+    if (hideUntil && Date.now() < hideUntil) {
+      return false
     }
+    if (this.settings.allowShow === 'all') return true
+    if (this.settings.allowShow === this.currentPage) return true
+    return this.settings.allowShow === 'specific' && this.settings.specificPages[this.currentPage]
   }
 
   insertContainer () {
@@ -50,17 +54,6 @@ export default class DisplayManager {
       if (target) insertAfter(el, target)
     }
     this.container = el
-  }
-
-  setPosition () {
-    const pos = this.settings.position
-    const s = this.container.style
-    s.position = 'fixed'
-    s.zIndex = '9999'
-    s.bottom = pos.includes('bottom') ? '20px' : 'auto'
-    s.top = pos.includes('top') ? '20px' : 'auto'
-    s.left = pos.includes('left') ? '20px' : 'auto'
-    s.right = pos.includes('right') ? '20px' : 'auto'
   }
 
   setFilteredNotifications () {
@@ -80,30 +73,59 @@ export default class DisplayManager {
       this.notifications = [...this.notifications.slice(0, max)]
   }
 
+  setIndexAfterReload () {
+    if (this.settings.continueAfterReload) {
+      const saved = localStorage.getItem(STORAGE_KEYS.restoreIndex)
+      const index = parseInt(saved)
+      if (isNaN(index) || index >= this.notifications.length) {
+        this.currentIndex = 0
+      } else {
+        this.currentIndex = index
+      }
+    }
+  }
+
+  async waitFirstDelay () {
+    const delay = this.settings.firstDelay
+    await new Promise(resolve => setTimeout(resolve, delay * 1000))
+  }
+
   getNextNotification () {
     if (this.settings.displayMethod === 'randomly') {
       return this.notifications[Math.floor(Math.random() * this.notifications.length)]
     }
-
     return this.notifications[this.currentIndex % this.notifications.length]
   }
 
-  showNext () {
-    if (this.currentIndex >= this.notifications.length) {
-      if (this.settings.replayPlaylist) this.currentIndex = 0
-      else return
-    }
-    if (this.isClose) {
-      return
-    }
-    const notification = this.getNextNotification()
-    this.currentIndex++
-    const duration = this.settings.displayDuration * 1000
+  async startPopupLoop () {
     const interval = this.settings.popsInterval * 1000
+    const duration = this.settings.displayDuration * 1000
+    if (this.notifications.length === 0 || this.isClose) return
+
+    do {
+      if (this.currentIndex >= this.notifications.length) {
+        if (this.settings.replayPlaylist) {
+          this.currentIndex = 0
+        } else {
+          break
+        }
+      }
+      const notification = this.getNextNotification()
+      this.currentIndex++
+      const popupDiv = this.displayPopup(notification)
+      await this.sleep(duration)
+      await this.fadeOut(popupDiv)
+      await this.sleep(interval)
+      if (this.settings.continueAfterReload) {
+        localStorage.setItem(STORAGE_KEYS.restoreIndex, this.currentIndex)
+      }
+    } while (!this.isClose && (this.settings.replayPlaylist || this.currentIndex < this.notifications.length))
+  }
+
+  displayPopup (notification) {
     const popupDiv = document.createElement('div')
     this.container.appendChild(popupDiv)
     const productLink = window.location.origin + '/products/' + notification.productHandle
-
     render(
       <NotificationPopup
         {...notification}
@@ -113,28 +135,15 @@ export default class DisplayManager {
       />,
       popupDiv
     )
-
-    setTimeout(() => {
-      popupDiv.classList.add('Fade-Out-Up')
-      setTimeout(() => {
-        popupDiv.remove()
-        if (this.settings.continueAfterReload) {
-          localStorage.setItem(SALEPOPS_INDEX, this.currentIndex)
-        }
-        setTimeout(() => this.showNext(), interval)
-      }, 500)
-    }, duration)
+    return popupDiv
   }
 
-  shouldShow () {
-    if (!this.settings.isActive) return false
-    const hideUntil = Number(localStorage.getItem(NOTIFICATIONS_HIDE_UNTIL))
-    if (hideUntil && Date.now() < hideUntil) {
-      return false
-    }
-    if (this.settings.allowShow === 'all') return true
-    if (this.settings.allowShow === this.currentPage) return true
-    return this.settings.allowShow === 'specific' && this.settings.specificPages[this.currentPage]
+  async fadeOut (popupDiv) {
+    const wrapper = document.querySelector('.Avava-SP__Wrapper')
+    if (wrapper) wrapper.classList.add('Fade-Out-Up')
+    await this.sleep(1000)
+    popupDiv.remove()
+
   }
 
   onClose (e) {
@@ -142,6 +151,10 @@ export default class DisplayManager {
     e.preventDefault()
     this.isClose = true
     const hideUntil = Date.now() + this.settings.hidePopsAfter * 60 * 60 * 1000
-    localStorage.setItem(NOTIFICATIONS_HIDE_UNTIL, hideUntil)
+    localStorage.setItem(STORAGE_KEYS.hideUntil, hideUntil)
+  }
+
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }

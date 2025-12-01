@@ -1,3 +1,9 @@
+/**
+ *
+ * @param order
+ * @param shopifyDomain
+ * @returns {{firstName, city, productName, country, productId: *, productHandle, timestamp: Date|null, productImage, shopifyDomain: *}}
+ */
 export default function mapOrderToNotification (order, shopifyDomain) {
   const lineItem = order?.lineItems?.nodes?.[0] || null
   const product = lineItem?.product || null

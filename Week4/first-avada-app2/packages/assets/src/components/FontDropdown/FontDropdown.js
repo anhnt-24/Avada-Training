@@ -1,9 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ActionList, BlockStack, Box, Button, Popover, Text } from '@shopify/polaris'
+import loadFonts from '@assets/helpers/font/loadFonts'
+import loadFont from '@assets/helpers/font/loadFont'
 
 export default function FontDropdown ({ value, onChange }) {
   const [active, setActive] = useState(false)
-  const toggleActive = () => setActive((prev) => !prev)
+  const toggleActive = () => {
+    loadFonts()
+    setActive((prev) => !prev)
+  }
+  useEffect(() => {
+    loadFont(value)
+  }, [])
   const fonts = [
     'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Tahoma', 'Georgia', 'Impact', 'Comic Sans MS', 'Trebuchet MS',
     'Palatino', 'Garamond', 'Bookman', 'Avant Garde', 'Candara', 'Optima', 'Didot', 'Futura', 'Lucida Sans', 'Gill Sans',
