@@ -9,7 +9,6 @@ import { getOrders } from '@functions/services/orderService'
 import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotification'
 
 /**
- * Lấy tất cả notifications của shop
  * @param ctx
  */
 export async function getAll (ctx) {
@@ -48,6 +47,34 @@ export async function syncOrders (ctx) {
       data
     }
   } catch (e) {
+    ctx.body = {
+      success: false,
+      message: e.message || 'Failed to create notifications',
+    }
+  }
+}
+
+/**
+ *
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+export async function syncOrdersFromCSV (ctx) {
+  try {
+    const shopifyDomain = ctx.state.shopify.shop
+    const records = ctx.req.body
+    console.log('records =', records)
+    console.log('type =', typeof records)
+    console.log('isArray =', Array.isArray(records))
+    const notifications = records.map(record => ({ ...record, shopifyDomain, timestamp: new Date().toISOString() }))
+    await deleteNotificationsByShop(shopifyDomain)
+    const data = await createManyNotifications(notifications)
+    ctx.body = {
+      success: true,
+      data
+    }
+  } catch (e) {
+    console.log(e)
     ctx.body = {
       success: false,
       message: e.message || 'Failed to create notifications',

@@ -59,8 +59,8 @@ api.use(
   })
 )
 const router = apiRouter(true)
-api.use(router.allowedMethods())
 api.use(router.routes())
+api.use(router.allowedMethods())
 
 api.on('error', errorService.handleError)
 

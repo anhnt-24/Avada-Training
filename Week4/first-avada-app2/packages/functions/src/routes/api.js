@@ -29,6 +29,7 @@ export default function apiRouter (isEmbed = false) {
   router.get('/notifications', salePopsNotificationController.getAll)
   router.post('/notifications/sync-orders', salePopsNotificationController.syncOrders)
   router.delete('/notifications/delete', salePopsNotificationController.deleteMany)
+  router.post('/notifications/upload', salePopsNotificationController.syncOrdersFromCSV)
 
   router.get('/announcements', announcementController.getAll)
   router.get('/announcements/:id', announcementController.getById)

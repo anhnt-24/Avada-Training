@@ -75,7 +75,6 @@ export async function createManyNotifications (notifications) {
         return {
           id: snapshot.id,
           ...formatDateFields(snapshot.data()),
-          relativeTime: formatRelativeTime(snapshot.data().createdAt)
         }
       })
     )
@@ -122,7 +121,7 @@ export async function deleteNotificationsByShop (shopifyDomain) {
     if (snapshots.empty) return true
 
     const batch = firestore.batch()
-    snapshots.docs.forEach(doc => {
+    snapshots.docs?.forEach(doc => {
       batch.delete(doc.ref)
     })
 

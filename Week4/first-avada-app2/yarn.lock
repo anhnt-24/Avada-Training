@@ -176,6 +176,7 @@ __metadata:
     file-loader: "npm:^4.2.0"
     firebase: "npm:9.10.0"
     history: "npm:^4.10.1"
+    papaparse: "npm:^5.5.3"
     prop-types: "npm:^15.8.1"
     qs-stringify: "npm:^1.2.1"
     react: "npm:18.2.0"
@@ -294,6 +295,7 @@ __metadata:
     "@google-cloud/firestore": "npm:^6.6.1"
     "@google-cloud/pubsub": "npm:^3.7.1"
     axios: "npm:^1.12.2"
+    busboy: "npm:^1.6.0"
     firebase-admin: "npm:11.10.0"
     firebase-functions: "npm:4.4.1"
     graphql-tag: "npm:^2.12.6"
@@ -7826,6 +7828,15 @@ __metadata:
   dependencies:
     run-applescript: "npm:^7.0.0"
   checksum: 10c0/8e575981e79c2bcf14d8b1c027a3775c095d362d1382312f444a7c861b0e21513c0bd8db5bd2b16e50ba0709fa622d4eab6b53192d222120305e68359daece29
+  languageName: node
+  linkType: hard
+
+"busboy@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "busboy@npm:1.6.0"
+  dependencies:
+    streamsearch: "npm:^1.1.0"
+  checksum: 10c0/fa7e836a2b82699b6e074393428b91ae579d4f9e21f5ac468e1b459a244341d722d2d22d10920cdd849743dbece6dca11d72de939fb75a7448825cf2babfba1f
   languageName: node
   linkType: hard
 
@@ -17562,6 +17573,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"papaparse@npm:^5.5.3":
+  version: 5.5.3
+  resolution: "papaparse@npm:5.5.3"
+  checksum: 10c0/623aae6a35703308fd5a39d616fb3837231ebc70697346355ea508154d3f24df75b6554b736afc1924192205518a5db14e75f5e1cf35d154326050a37cdd9447
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -21112,6 +21130,13 @@ __metadata:
   version: 0.2.2
   resolution: "stream-to@npm:0.2.2"
   checksum: 10c0/deea419ec155e1b6f0263cd96c7d6bd90ba713fa7e2ce44648a752b86a3035fc4caf556092859f9dcb0b1ec9d6fc8aa9a92bb030189ac42d8962f37fe65a23e7
+  languageName: node
+  linkType: hard
+
+"streamsearch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "streamsearch@npm:1.1.0"
+  checksum: 10c0/fbd9aecc2621364384d157f7e59426f4bfd385e8b424b5aaa79c83a6f5a1c8fd2e4e3289e95de1eb3511cb96bb333d6281a9919fafce760e4edb35b2cd2facab
   languageName: node
   linkType: hard
 

@@ -13,6 +13,7 @@ import {
   useIndexResourceState,
   useSetIndexFiltersMode,
 } from '@shopify/polaris'
+import Papa from 'papaparse'
 import { useEffect, useState } from 'react'
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup'
 import useFetchApi from '@assets/hooks/api/useFetchApi'
@@ -22,6 +23,7 @@ import useCreateApi from '@assets/hooks/api/useCreateApi'
 import useEditApi from '@assets/hooks/api/useEditApi'
 import { formatDateOnly } from '@assets/helpers/utils/formatFullTime'
 import UploadZone from '@assets/components/UploadZone/UploadZone'
+import { mapCsvToNotifications } from '@assets/helpers/mapper/mapCsvToNotifications'
 
 export default function SalePopsNotifications () {
   const {
@@ -37,6 +39,11 @@ export default function SalePopsNotifications () {
   const { editing: activating, handleEdit: handleActive } = useEditApi({ url: '/settings/active' })
   const { handleDelete, deleting } = useDeleteApi({ url: '/notifications/delete' })
   const { handleCreate, creating } = useCreateApi({ url: '/notifications/sync-orders', fullResp: true })
+  const { handleCreate: handleImport, creating: uploading } = useCreateApi({
+    url: '/notifications/upload',
+    fullResp: true
+  })
+  const [file, setFile] = useState(null)
   const [isShowSyncBanner, setIsShowSyncBanner] = useState(true)
   const [sortSelected, setSortSelected] = useState(['date desc'])
   const { mode, setMode } = useSetIndexFiltersMode()
@@ -79,7 +86,7 @@ export default function SalePopsNotifications () {
       console.error('Error syncing orders:', error)
     }
   }
-  const loading = loadingSettings || loadingNotifications
+  const loading = loadingSettings || loadingNotifications || uploading
 
   const resourceName = { singular: 'notification', plural: 'notifications' }
 
@@ -95,6 +102,10 @@ export default function SalePopsNotifications () {
       onAction: bulkHandleDelete,
     },
   ]
+  const handleUploadModalClose = () => {
+    setIsUploadModalOpen(false)
+    setFile(null)
+  }
 
   const rowMarkup = paginatedNotifications.map((item, index) => (
     <IndexTable.Row
@@ -127,6 +138,34 @@ export default function SalePopsNotifications () {
     })
     setNotifications(sorted)
   }, [sortSelected])
+  const handleDownload = () => {
+    const url = '/scripttag/notifications_sample.csv'
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'notifications_sample.csv'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+
+  const handleUploadCsv = () => {
+    Papa.parse(file, {
+      skipEmptyLines: true,
+      delimiter: ',',
+      header: true,
+      dynamicTyping: true,
+      transformHeader: function (h) {
+        return h.trim()
+      },
+      complete: async function (result) {
+        const cleanedData = mapCsvToNotifications(result.data)
+        const data = await handleImport(cleanedData)
+        setNotifications(data.data)
+        handleUploadModalClose()
+      }
+
+    })
+  }
 
   return (
     <Page
@@ -208,17 +247,24 @@ export default function SalePopsNotifications () {
           >
             {rowMarkup}
           </IndexTable>
-          <Modal open={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)}
-                 title={'Upload your notifications here.'}>
+          <Modal open={isUploadModalOpen} onClose={handleUploadModalClose}
+                 title={'Upload your notifications here.'}
+                 primaryAction={{ content: 'Upload', onAction: handleUploadCsv, loading: uploading }}
+                 secondaryActions={[{
+                   content: 'Cancel',
+                   onAction: handleUploadModalClose,
+                   disabled: uploading
+                 }]}>
             <Modal.Section>
               <BlockStack gap={'400'}>
                 <InlineStack gap={'100'}>
                   <Text>Here is our</Text>
-                  <Link url={'#'}>sample.csv</Link>
+                  <Link onClick={handleDownload}>
+                    sample.csv
+                  </Link>
                 </InlineStack>
-                <UploadZone></UploadZone>
+                <UploadZone file={file} setFile={setFile}></UploadZone>
               </BlockStack>
-
             </Modal.Section>
           </Modal>
 
