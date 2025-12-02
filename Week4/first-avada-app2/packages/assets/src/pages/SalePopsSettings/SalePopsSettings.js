@@ -75,7 +75,6 @@ export default function SalePopsSettings () {
           <SalePopsPreview settings={form}/>
         </Layout.Section>
       </Layout>
-
       <SaveBar id={SAVE_BAR_ID}>
         <button onClick={handleSave} variant={'primary'} loading={editing && ''}>Save</button>
         <button onClick={handleDiscard} disabled={editing}>Discard</button>

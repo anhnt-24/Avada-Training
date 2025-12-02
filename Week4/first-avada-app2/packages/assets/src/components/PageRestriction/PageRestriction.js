@@ -4,45 +4,25 @@ import React, { useCallback } from 'react'
 import { RESTRICTION_OPTIONS } from '@assets/const/salePopsSettings'
 import ResourcePickerComponent from '@assets/components/ResourcePickerComponent/ResourcePickerComponent'
 
-const RenderSpecificPageProduct = ({ specificProducts, updateSpecificProducts }) => {
+const RenderSpecificItems = ({ items, updateSpecificItems, resourceType }) => {
   const renderChildren = useCallback(
     (isSelected) =>
       isSelected && (
         <ResourcePickerComponent
-          selectedItems={specificProducts.list}
-          setSelectedItems={(productIds) => updateSpecificProducts({
-            ...specificProducts,
-            list: productIds
+          resourceType={resourceType}
+          selectedItems={items.list}
+          setSelectedItems={(ids) => updateSpecificItems({
+            ...items,
+            list: ids
           })}></ResourcePickerComponent>
-      ), [specificProducts, updateSpecificProducts]
+      ), [items, updateSpecificItems]
   )
-  const PRODUCT_SPECIFIC_CHOICES = [{ label: 'All products', value: 'all' },
-    { label: 'Specific products', value: 'specific', renderChildren }]
+  const SPECIFIC_CHOICES = [{ label: `All ${resourceType}`, value: 'all' },
+    { label: `Specific ${resourceType}s`, value: 'specific', renderChildren }]
   return <ChoiceList
-    choices={PRODUCT_SPECIFIC_CHOICES}
-    selected={[specificProducts.type]}
-    onChange={(value) => updateSpecificProducts(({ ...specificProducts, type: value[0] }))}
-  />
-}
-const RenderSpecificPageCollection = ({ specificProducts, updateSpecificProducts }) => {
-  const renderChildren = useCallback(
-    (isSelected) =>
-      isSelected && (
-        <ResourcePickerComponent
-          resourceType={'collection'}
-          selectedItems={specificProducts.list}
-          setSelectedItems={(productIds) => updateSpecificProducts({
-            ...specificProducts,
-            list: productIds
-          })}></ResourcePickerComponent>
-      ), [specificProducts, updateSpecificProducts]
-  )
-  const PRODUCT_SPECIFIC_CHOICES = [{ label: 'All collections', value: 'all' },
-    { label: 'Specific collections', value: 'specific', renderChildren }]
-  return <ChoiceList
-    choices={PRODUCT_SPECIFIC_CHOICES}
-    selected={[specificProducts.type]}
-    onChange={(value) => updateSpecificProducts(({ ...specificProducts, type: value[0] }))}
+    choices={SPECIFIC_CHOICES}
+    selected={[items.type]}
+    onChange={(value) => updateSpecificItems(({ ...items, type: value[0] }))}
   />
 }
 export default function PageRestriction ({ form, updateFormKey }) {
@@ -50,17 +30,19 @@ export default function PageRestriction ({ form, updateFormKey }) {
   const renderSpecificProducts = useCallback(
     (isSelected) =>
       isSelected && (
-        <RenderSpecificPageProduct
-          specificProducts={form.specificProducts}
-          updateSpecificProducts={(value) => updateFormKey('specificProducts', value)}/>
+        <RenderSpecificItems
+          resourceType={'product'}
+          items={form.specificProducts}
+          updateSpecificItems={(value) => updateFormKey('specificProducts', value)}/>
       ),
   )
   const renderSpecificCollections = useCallback(
     (isSelected) =>
       isSelected && (
-        <RenderSpecificPageCollection
-          specificProducts={form.specificCollections}
-          updateSpecificProducts={(value) => updateFormKey('specificCollections', value)}/>
+        <RenderSpecificItems
+          resourceType={'collection'}
+          items={form.specificCollections}
+          updateSpecificItems={(value) => updateFormKey('specificCollections', value)}/>
       ),
   )
   const SPECIFIC_PAGES = [
