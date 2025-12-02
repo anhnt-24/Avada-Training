@@ -4,7 +4,6 @@ import {
   BlockStack,
   IndexFilters,
   IndexTable,
-  InlineStack,
   LegacyCard,
   Link,
   Modal,
@@ -40,7 +39,7 @@ export default function SalePopsNotifications () {
   const { handleDelete, deleting } = useDeleteApi({ url: '/notifications/delete' })
   const { handleCreate, creating } = useCreateApi({ url: '/notifications/sync-orders', fullResp: true })
   const { handleCreate: handleImport, creating: uploading } = useCreateApi({
-    url: '/notifications/upload',
+    url: '/notifications/import',
     fullResp: true
   })
   const [file, setFile] = useState(null)
@@ -158,10 +157,15 @@ export default function SalePopsNotifications () {
         return h.trim()
       },
       complete: async function (result) {
-        const cleanedData = mapCsvToNotifications(result.data)
-        const data = await handleImport(cleanedData)
-        setNotifications(data.data)
-        handleUploadModalClose()
+        try {
+          const cleanedData = mapCsvToNotifications(result.data)
+          const data = await handleImport(cleanedData)
+          setNotifications(data.data)
+          handleUploadModalClose()
+        } catch (e) {
+          console.error(e)
+        }
+
       }
 
     })
@@ -257,17 +261,19 @@ export default function SalePopsNotifications () {
                  }]}>
             <Modal.Section>
               <BlockStack gap={'400'}>
-                <InlineStack gap={'100'}>
-                  <Text>Here is our</Text>
-                  <Link onClick={handleDownload}>
-                    sample.csv
-                  </Link>
-                </InlineStack>
+                <Banner>
+                  You can upload a maximum of 45 records.
+                  <br/>
+                  All current data will be removed.
+                  <br/>
+                  Use our sample file for reference: <Link onClick={handleDownload}>
+                  sample.csv
+                </Link>
+                </Banner>
                 <UploadZone file={file} setFile={setFile}></UploadZone>
               </BlockStack>
             </Modal.Section>
           </Modal>
-
         </LegacyCard>
       </BlockStack>
     </Page>

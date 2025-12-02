@@ -44,6 +44,7 @@ export async function getById (ctx) {
       success: true,
     }
   } catch (e) {
+    
     ctx.body = {
       data: null,
       success: false,

@@ -8,6 +8,7 @@ import * as salePopsSettingsController from '@functions/controllers/salePopsSett
 import * as salePopsNotificationController from '@functions/controllers/salePopsNotificationsController'
 import * as announcementController from '@functions/controllers/anouncementBarController'
 import * as extensionController from '@functions/controllers/extensionController'
+import { validateNotificationsMiddlware } from '@functions/middleware/validateNotificationsMiddleware'
 
 export default function apiRouter (isEmbed = false) {
   const router = new Router({ prefix: getApiPrefix(isEmbed) })
@@ -29,7 +30,7 @@ export default function apiRouter (isEmbed = false) {
   router.get('/notifications', salePopsNotificationController.getAll)
   router.post('/notifications/sync-orders', salePopsNotificationController.syncOrders)
   router.delete('/notifications/delete', salePopsNotificationController.deleteMany)
-  router.post('/notifications/upload', salePopsNotificationController.syncOrdersFromCSV)
+  router.post('/notifications/import', validateNotificationsMiddlware, salePopsNotificationController.syncOrdersFromCSV)
 
   router.get('/announcements', announcementController.getAll)
   router.get('/announcements/:id', announcementController.getById)

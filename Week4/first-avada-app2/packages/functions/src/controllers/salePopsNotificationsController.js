@@ -74,7 +74,6 @@ export async function syncOrdersFromCSV (ctx) {
       data
     }
   } catch (e) {
-    console.log(e)
     ctx.body = {
       success: false,
       message: e.message || 'Failed to create notifications',
