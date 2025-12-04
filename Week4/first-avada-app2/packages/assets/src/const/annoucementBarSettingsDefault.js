@@ -1,9 +1,9 @@
 export const ContentSideBarSettingDefault =
   {
     type: 'simple',
-    name: 'Announcement Bar Creation',
     title: 'Enjoy a 20% discount on all our products!',
     subheading: '',
+    name: 'New Announcement Bar',
     announcements: [
       {
         title: 'Enjoy a 20% discount on all our products!',
@@ -47,10 +47,6 @@ export const SCHEDULE_OPTIONS = [
   { label: 'Specific date', value: 'specific' },
 ]
 export const DesignSideBarSettingsDefault = {
-  position: {
-    value: 'top',
-    sticky: false,
-  },
   card: {
     background: {
       type: 'solid',
@@ -93,11 +89,6 @@ export const DesignSideBarSettingsDefault = {
   },
 }
 
-export const POSITION_OPTIONS = [
-  { label: 'Top', value: 'top' },
-  { label: 'Bottom', value: 'bottom' },
-]
-
 export const BACKGROUND_TYPE_OPTIONS = [
   { label: 'Single color background', value: 'solid' },
   { label: 'Gradient background', value: 'gradient' },
@@ -110,9 +101,7 @@ export const FONT_OPTIONS = [
 ]
 
 export const PlacementSideBarSettingsDefault = {
-  restrictionType: '',
-  includedPages: '',
-  excludedPages: '',
+  restrictionType: 'home_page',
 }
 
 export const PAGE_SELECTION_OPTIONS = [

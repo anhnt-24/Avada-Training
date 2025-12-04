@@ -28,7 +28,7 @@ export default function apiRouter (isEmbed = false) {
   router.put('/settings/active', salePopsSettingsController.toggleActiveSetting)
 
   router.get('/notifications', salePopsNotificationController.getAll)
-  router.post('/notifications/sync-orders', salePopsNotificationController.syncOrders)
+  router.post('/notifications/sync-orders', salePopsNotificationController.syncManuallyOrders)
   router.delete('/notifications/delete', salePopsNotificationController.deleteMany)
   router.post('/notifications/import', validateNotificationsMiddlware, salePopsNotificationController.syncOrdersFromCSV)
 
@@ -37,6 +37,7 @@ export default function apiRouter (isEmbed = false) {
   router.post('/announcements', announcementController.create)
   router.put('/announcements/:id/toggle-published', announcementController.togglePublished)
   router.put('/announcements/:id', announcementController.update)
+  router.delete('/announcements/delete-many', announcementController.deleteMany)
   router.delete('/announcements/:id', announcementController.remove)
 
   router.get('/extension/is-disabled', extensionController.checkExtensionEnabled)

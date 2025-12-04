@@ -1,0 +1,13 @@
+query getMetaobject($id: ID!) {
+  metaobject(id: $id) {
+    id
+    handle
+    updatedAt
+    displayName
+    fields {
+      key
+      value
+    }
+    capabilities{publishable{status}}
+  }
+}

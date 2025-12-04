@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../../../node_modules/@shopify/web-pixels-extension/build/esm/globals.mjs", "../../../../node_modules/@shopify/web-pixels-extension/build/esm/register.mjs", "../../../../extensions/web-pixel/src/index.js"],
+  "sourceRoot": "D:/AvadaTraining/Week4/first-avada-app2/extensions/web-pixel/src",
+  "sourcesContent": ["const EXTENSION_POINT = 'WebPixel::Render';\n\nexport { EXTENSION_POINT };\n", "import { EXTENSION_POINT } from './globals.mjs';\n\nconst register = extend => shopify.extend(EXTENSION_POINT, extend);\n\nexport { register };\n", "import { register } from '@shopify/web-pixels-extension'\r\n\r\nregister(({ analytics, browser, init, settings }) => {\r\n  // Bootstrap and insert pixel script tag here\r\n\r\n  // Sample subscribe to page view\r\n  analytics.subscribe('page_viewed', (event) => {\r\n    console.log('Page viewed', event)\r\n  })\r\n  console.log('cc')\r\n})\r\n"],
+  "mappings": "MAAA,IAAMA,EAAkB,mBCExB,IAAMC,EAAWC,GAAU,QAAQ,OAAOC,EAAiBD,CAAM,ECAjEE,EAAS,CAAC,CAAE,UAAAC,EAAW,QAAAC,EAAS,KAAAC,EAAM,SAAAC,CAAS,IAAM,CAInDH,EAAU,UAAU,cAAgBI,GAAU,CAC5C,QAAQ,IAAI,cAAeA,CAAK,CAClC,CAAC,EACD,QAAQ,IAAI,IAAI,CAClB,CAAC",
+  "names": ["EXTENSION_POINT", "register", "extend", "EXTENSION_POINT", "register", "analytics", "browser", "init", "settings", "event"]
+}

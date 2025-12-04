@@ -1,0 +1,15 @@
+query getMetaobjects($type: String!, $first: Int!) {
+  metaobjects(type: $type, first: $first) {
+    nodes {
+      id
+      handle
+      updatedAt
+      displayName
+      fields {
+        key
+        value
+      }
+      capabilities{publishable{status}}
+    }
+  }
+}

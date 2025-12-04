@@ -1,5 +1,3 @@
-import { getShopByShopifyDomain } from '@avada/core'
-import { initShopify } from '@functions/services/shopifyService'
 import { loadGraphQL } from '@functions/helpers/graphql/graphqlHelpers'
 import {
   createManyNotifications,
@@ -9,37 +7,34 @@ import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotifica
 
 /**
  *
+ * @param shopify
  * @param shopifyDomain
- * @param shopData
  * @returns {Promise<void>}
  */
-export async function syncOrders (shopifyDomain, shopData) {
-  const data = await getOrders(shopData)
+export async function syncOrders (shopify, shopifyDomain) {
+  const data = await getOrders(shopify)
   const mappedNotifications = data.orders.nodes.map(order => mapOrderToNotification(order, shopifyDomain))
   await deleteNotificationsByShop(shopifyDomain)
-  await createManyNotifications(mappedNotifications)
+  return await createManyNotifications(mappedNotifications)
 }
 
 /**
  *
- * @param shopData
+ * @param shopify
  * @returns {Promise<any>}
  */
-export async function getOrders (shopData) {
-  const shopify = initShopify(shopData)
+export async function getOrders (shopify) {
   const query = loadGraphQL('/orders.graphql')
   return await shopify.graphql(query)
 }
 
 /**
  *
- * @param shopifyDomain
+ * @param shopify
  * @param orderId
  * @returns {Promise<*>}
  */
-export async function getOrderById (shopifyDomain, orderId) {
-  const shopData = await getShopByShopifyDomain(shopifyDomain)
-  const shopify = initShopify(shopData)
+export async function getOrderById (shopify, orderId) {
   const query = loadGraphQL('/getOrderById.graphql')
   const gid = typeof orderId === 'string' && orderId.startsWith('gid://shopify/Order/')
     ? orderId

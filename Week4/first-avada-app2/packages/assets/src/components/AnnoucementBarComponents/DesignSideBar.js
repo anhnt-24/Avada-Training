@@ -1,37 +1,11 @@
 import React from 'react'
-import {
-  BlockStack,
-  Box,
-  Card,
-  Checkbox,
-  ChoiceList,
-  Divider,
-  InlineGrid,
-  Select,
-  Text,
-  TextField
-} from '@shopify/polaris'
+import { BlockStack, Box, Card, ChoiceList, Divider, InlineGrid, Select, Text, TextField } from '@shopify/polaris'
 import { ColorPicker } from '@assets/components/ColorPicker/ColorPicker'
-import { BACKGROUND_TYPE_OPTIONS, FONT_OPTIONS, POSITION_OPTIONS } from '@assets/const/annoucementBarSettingsDefault'
+import { BACKGROUND_TYPE_OPTIONS, FONT_OPTIONS } from '@assets/const/annoucementBarSettingsDefault'
 import Slider from '@assets/components/Slider/Slider'
 
 export const DesignSideBar = ({ form, setForm }) => {
   const data = form.design
-
-  // Position
-  const handlePositionChange = (value) =>
-    setForm(prev => ({
-      ...prev,
-      design: { ...prev.design, position: { ...prev.design.position, value } }
-    }))
-
-  const handleStickyChange = (value) =>
-    setForm(prev => ({
-      ...prev,
-      design: { ...prev.design, position: { ...prev.design.position, sticky: value } }
-    }))
-
-  // Background
   const handleBackgroundTypeChange = (value) =>
     setForm(prev => ({
       ...prev,
@@ -53,7 +27,6 @@ export const DesignSideBar = ({ form, setForm }) => {
         }
       }
     })
-
   const handleBackgroundAngleChange = (value) =>
     setForm(prev => ({
       ...prev,
@@ -66,21 +39,6 @@ export const DesignSideBar = ({ form, setForm }) => {
   return (
     <Card>
       <BlockStack gap="400">
-        <Text variant="headingMd" as="h2">Position</Text>
-        <Select
-          label="Positioning"
-          options={POSITION_OPTIONS}
-          value={data.position.value}
-          onChange={handlePositionChange}
-        />
-        <Checkbox
-          label="Sticky bar"
-          checked={data.position.sticky}
-          onChange={handleStickyChange}
-        />
-
-        <Divider/>
-
         <Text variant="headingMd" as="h2">Card</Text>
         <ChoiceList
           title="Background type"

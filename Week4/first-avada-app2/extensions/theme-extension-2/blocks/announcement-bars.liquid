@@ -1,0 +1,55 @@
+{% for value in metaobjects['announcement_bar_settings'].values %}
+  {% assign cfg = value.config | parse_json %}
+  <div class="ann-bar" style="background-color: red">
+    <div class="ann-wrapper">
+
+      {%- if cfg.content.type == "simple" -%}
+        <div class="ann-item">
+          <div class="ann-title">{{ cfg.content.title }}</div>
+          {% if cfg.content.subheading != blank %}
+            <div class="ann-subtitle">{{ cfg.content.subheading }}</div>
+          {% endif %}
+        </div>
+      {%- endif -%}
+
+      {%- if cfg.content.type == "rotate" -%}
+        <div class="ann-rotate" data-speed="{{ cfg.content.rotateSpeed }}">
+          {% for item in cfg.content.announcements %}
+            <div class="ann-item">{{ item.title }}</div>
+          {% endfor %}
+        </div>
+      {%- endif -%}
+
+      {%- if cfg.content.cta.textBtn != blank -%}
+        <a class="ann-btn" href="{{ cfg.content.cta.link }}">{{ cfg.content.cta.textBtn }}</a>
+      {%- endif -%}
+
+      {%- if cfg.design.closeIcon.size > 0 -%}
+        <button class="ann-close">&times;</button>
+      {%- endif -%}
+
+    </div>
+  </div>
+{% endfor %}
+
+
+<style>
+  .ann-bar {
+    background: red;
+  }
+
+  .announcement-bar {
+    background: red;
+    padding: 10px;
+  }
+
+  .announcement-title {
+    font-size: 18px;
+  }
+</style>
+{% schema %}
+{
+  "name": "Metaobject Announce Bar",
+  "target": "section"
+}
+{% endschema %}

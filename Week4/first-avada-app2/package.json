@@ -3,7 +3,8 @@
   "name": "@avada/app",
   "description": "An AVADA application for Shopify written in Nodejs",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "extensions/*"
   ],
   "scripts": {
     "deploy": "./node_modules/.bin/firebase deploy",
@@ -46,6 +47,7 @@
   "dependencies": {
     "@avada/console": "1.0.0",
     "@shopify/cli": "3.85.5",
+    "@shopify/ui-extensions": "~2025.10.0",
     "concurrently": "^7.6.0",
     "cross-env": "^10.1.0"
   },

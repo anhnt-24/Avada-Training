@@ -1,5 +1,5 @@
 import React from 'react'
-import { BlockStack, Card, ChoiceList, Text, TextField } from '@shopify/polaris'
+import { BlockStack, Card, ChoiceList, Text } from '@shopify/polaris'
 import { PAGE_SELECTION_OPTIONS } from '@assets/const/annoucementBarSettingsDefault'
 
 export const PlacementSideBar = ({ form, setForm }) => {
@@ -36,23 +36,23 @@ export const PlacementSideBar = ({ form, setForm }) => {
           onChange={handlePageSelectionChange}
         />
 
-        <Text variant="headingMd" as="h2">You can also use some link</Text>
-        <>
-          <TextField
-            label="Included pages"
-            multiline={4}
-            value={data.includedPages}
-            onChange={handleIncludedPagesChange}
-            helpText="Page URLs to show the pop-up (separated by new lines)"
-          />
-          <TextField
-            label="Excluded pages"
-            multiline={4}
-            value={data.excludedPages}
-            onChange={handleExcludedPagesChange}
-            helpText="Page URLs NOT to show the pop-up (separated by new lines)"
-          />
-        </>
+        {/*<Text variant="headingMd" as="h2">You can also use some link</Text>*/}
+        {/*<>*/}
+        {/*  <TextField*/}
+        {/*    label="Included pages"*/}
+        {/*    multiline={4}*/}
+        {/*    value={data.includedPages}*/}
+        {/*    onChange={handleIncludedPagesChange}*/}
+        {/*    helpText="Page URLs to show the pop-up (separated by new lines)"*/}
+        {/*  />*/}
+        {/*  <TextField*/}
+        {/*    label="Excluded pages"*/}
+        {/*    multiline={4}*/}
+        {/*    value={data.excludedPages}*/}
+        {/*    onChange={handleExcludedPagesChange}*/}
+        {/*    helpText="Page URLs NOT to show the pop-up (separated by new lines)"*/}
+        {/*  />*/}
+        {/*</>*/}
       </BlockStack>
     </Card>
   )

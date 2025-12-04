@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import AnnouncementBar from '@assets/components/AnnouncementBar/AnnouncementBar'
+import './AnnouncementCarousel.scss'
 
 export default function AnnouncementCarousel ({ form }) {
   const carouselRef = useRef(null)
@@ -19,39 +20,14 @@ export default function AnnouncementCarousel ({ form }) {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      <button
-        onClick={scrollPrev}
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-        }}
-      >
-        ◀
+    <div className="carousel-wrapper">
+      <button className="carousel-btn prev" onClick={scrollPrev}>
+        &#x2039;
       </button>
 
-      <div
-        ref={carouselRef}
-        className="carousel-container"
-        style={{
-          display: 'flex',
-          overflowX: 'hidden',
-          scrollSnapType: 'x mandatory',
-          gap: '20px',
-          scrollBehavior: 'smooth',
-        }}
-      >
+      <div ref={carouselRef} className="carousel-container">
         {form.content.announcements.map((announcement, index) => (
-          <div
-            key={index}
-            style={{
-              flex: '0 0 100%',
-              scrollSnapAlign: 'start',
-            }}
-          >
+          <div key={index} className="carousel-item">
             <AnnouncementBar
               id={index}
               form={form}
@@ -61,17 +37,8 @@ export default function AnnouncementCarousel ({ form }) {
         ))}
       </div>
 
-      <button
-        onClick={scrollNext}
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-        }}
-      >
-        ▶
+      <button className="carousel-btn next" onClick={scrollNext}>
+        &#x203A;
       </button>
     </div>
   )

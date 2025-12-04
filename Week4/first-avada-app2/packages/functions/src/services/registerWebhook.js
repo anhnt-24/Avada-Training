@@ -1,14 +1,12 @@
 import appConfig from '@functions/config/app'
-import { initShopify } from '@functions/services/shopifyService'
 import { isEmpty } from '@avada/utils'
 
 /**
  *
- * @param shopData
+ * @param shopify
  * @returns {Promise<Shopify.IWebhook>}
  */
-export async function registerWebhook (shopData) {
-  const shopify = initShopify(shopData)
+export async function registerWebhook (shopify) {
   const currentWebhooks = await shopify.webhook.list()
   const unusedHooks = currentWebhooks.filter((webhook) =>
     !webhook.address.includes(appConfig.baseUrl)

@@ -12,6 +12,8 @@ import { syncOrders } from '@functions/services/orderService'
 import { registerWebhook } from '@functions/services/registerWebhook'
 import { salePopsSettings } from '@functions/const/salePopsSettings'
 import { createSetting } from '@functions/repositories/salePopsSettingsRepository'
+import { createAnnouncementBarDefinition } from '@functions/services/announcementBarSettingsService'
+import { initShopify } from '@functions/services/shopifyService'
 // Initialize all demand configuration for an application
 const api = new App()
 api.proxy = true
@@ -37,15 +39,17 @@ api.use(
     afterLogin: async ctx => {
       const shopifyDomain = ctx.state.shopify.shop
       const shopData = await getShopByShopifyDomain(shopifyDomain)
-      await registerWebhook(shopData)
-
+      const shopify = initShopify(shopData)
+      await registerWebhook(shopify)
     },
     afterInstall: async ctx => {
       const shopifyDomain = ctx.state.shopify.shop
       const shopData = await getShopByShopifyDomain(shopifyDomain)
+      const shopify = initShopify(shopData)
       await Promise.all([
-        registerWebhook(shopData),
-        syncOrders(shopifyDomain, shopData),
+        createAnnouncementBarDefinition(shopify),
+        registerWebhook(shopify),
+        syncOrders(shopify, shopifyDomain),
         createSetting(shopifyDomain, salePopsSettings)
       ])
     },

@@ -4,9 +4,9 @@ import {
   deleteNotificationsByShop,
   getNotificationsByShop
 } from '@functions/repositories/salePopsNotificationsRepository'
-import { getShopByShopifyDomain } from '@avada/core'
-import { getOrders } from '@functions/services/orderService'
-import mapOrderToNotification from '@functions/helpers/mapper/mapOrderToNotification'
+import { syncOrders } from '@functions/services/orderService'
+import { getCurrentShopData } from '@functions/helpers/auth'
+import { initShopify } from '@functions/services/shopifyService'
 
 /**
  * @param ctx
@@ -33,20 +33,19 @@ export async function getAll (ctx) {
  * @param ctx
  * @returns {Promise<void>}
  */
-export async function syncOrders (ctx) {
+export async function syncManuallyOrders (ctx) {
   try {
     const shopifyDomain = ctx.state.shopify.shop
-    const shopData = await getShopByShopifyDomain(shopifyDomain)
-    const orders = await getOrders(shopData)
-
-    const mappedNotifications = orders.orders.nodes.map(order => mapOrderToNotification(order, shopifyDomain))
-    await deleteNotificationsByShop(shopifyDomain)
-    const data = await createManyNotifications(mappedNotifications)
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const data = await syncOrders(shopify, shopifyDomain)
+    console.log(data)
     ctx.body = {
       success: true,
       data
     }
   } catch (e) {
+    console.log(e)
     ctx.body = {
       success: false,
       message: e.message || 'Failed to create notifications',

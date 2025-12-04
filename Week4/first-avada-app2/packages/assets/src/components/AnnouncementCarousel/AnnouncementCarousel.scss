@@ -1,0 +1,41 @@
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+
+  &:hover .carousel-btn {
+    opacity: 1;
+    transition: opacity 0.4s;
+  }
+}
+
+.carousel-container {
+  display: flex;
+  overflow: hidden;
+  gap: 20px;
+}
+
+.carousel-item {
+  flex: 0 0 100%;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  transform: translateY(-60%);
+  z-index: 10;
+  background: none;
+  border: none;
+  align-content: center;
+  font-size: 32px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.carousel-btn.prev {
+  left: 0;
+}
+
+.carousel-btn.next {
+  right: 0;
+}

@@ -132,6 +132,7 @@ __metadata:
   dependencies:
     "@avada/console": "npm:1.0.0"
     "@shopify/cli": "npm:3.85.5"
+    "@shopify/ui-extensions": "npm:~2025.10.0"
     babel-jest: "npm:^24.9.0"
     concurrently: "npm:^7.6.0"
     cross-env: "npm:^10.1.0"
@@ -5002,6 +5003,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@shopify/ui-extensions@npm:~2025.10.0":
+  version: 2025.10.8
+  resolution: "@shopify/ui-extensions@npm:2025.10.8"
+  dependencies:
+    ts-morph: "npm:^25.0.1"
+  peerDependencies:
+    "@preact/signals": "*"
+    preact: "*"
+  peerDependenciesMeta:
+    "@preact/signals":
+      optional: true
+    preact:
+      optional: true
+  checksum: 10c0/d53ba5bfc779a01cb695873843bda640d5b2f374fa61351ed601fab8d9a29620a2fe74dbb9ba74d20436b2a9d865fc98216594b5946c7bfe3b85223983170c37
+  languageName: node
+  linkType: hard
+
+"@shopify/web-pixels-extension@npm:^2.10.0":
+  version: 2.18.0
+  resolution: "@shopify/web-pixels-extension@npm:2.18.0"
+  checksum: 10c0/38842e2305905049d22d55f40422311b324bd3f8a1aafdf68bb8c17d29d06db94accc63e51570920f1332feb043162d790e7e1546b48142409980eec27a90ddd
+  languageName: node
+  linkType: hard
+
 "@simonwep/pickr@npm:1.4.7":
   version: 1.4.7
   resolution: "@simonwep/pickr@npm:1.4.7"
@@ -5062,6 +5087,17 @@ __metadata:
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
   checksum: 10c0/2a939b781826fb5fd3edd0f2ec3b321d259d760464cf20611c9877205aaca3ccc0b7304dea68416baa0d568e82cd86b17d29548d1e5139fa3155a4a86a2b4b49
+  languageName: node
+  linkType: hard
+
+"@ts-morph/common@npm:~0.26.0":
+  version: 0.26.1
+  resolution: "@ts-morph/common@npm:0.26.1"
+  dependencies:
+    fast-glob: "npm:^3.3.2"
+    minimatch: "npm:^9.0.4"
+    path-browserify: "npm:^1.0.1"
+  checksum: 10c0/49d33162de3f09fb2a242e38c04a7fa30966977a5282d97d0e27c1d68541956e917ac4de9aac6b41182dbae188482665da6e919c3f6ef0dcb90cea24e4d637e0
   languageName: node
   linkType: hard
 
@@ -8423,6 +8459,13 @@ __metadata:
   version: 4.6.0
   resolution: "co@npm:4.6.0"
   checksum: 10c0/c0e85ea0ca8bf0a50cbdca82efc5af0301240ca88ebe3644a6ffb8ffe911f34d40f8fbcf8f1d52c5ddd66706abd4d3bfcd64259f1e8e2371d4f47573b0dc8c28
+  languageName: node
+  linkType: hard
+
+"code-block-writer@npm:^13.0.3":
+  version: 13.0.3
+  resolution: "code-block-writer@npm:13.0.3"
+  checksum: 10c0/87db97b37583f71cfd7eced8bf3f0a0a0ca53af912751a734372b36c08cd27f3e8a4878ec05591c0cd9ae11bea8add1423e132d660edd86aab952656dd41fd66
   languageName: node
   linkType: hard
 
@@ -22004,6 +22047,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-morph@npm:^25.0.1":
+  version: 25.0.1
+  resolution: "ts-morph@npm:25.0.1"
+  dependencies:
+    "@ts-morph/common": "npm:~0.26.0"
+    code-block-writer: "npm:^13.0.3"
+  checksum: 10c0/4e8b67d7fc521d5dcc7e4e6dfb2e10bc63fcaaef8c31b91d3c9eb98eacd42db70bde3359075dcb8e988a5510f02e2ee6f98a02f89045d648bfda72a5207d78ba
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -22839,6 +22892,14 @@ __metadata:
   checksum: 10c0/df245f466ad83bd5cd80bfffc1674c7f64b7b84d1de0e4d2c0934fb0782e0a599164e7197a4bce310ee3342fd61817b8047ff04f076a1ce12dd470584142a4bd
   languageName: node
   linkType: hard
+
+"web-pixel@workspace:extensions/web-pixel":
+  version: 0.0.0-use.local
+  resolution: "web-pixel@workspace:extensions/web-pixel"
+  dependencies:
+    "@shopify/web-pixels-extension": "npm:^2.10.0"
+  languageName: unknown
+  linkType: soft
 
 "web-vitals@npm:^3.0.1":
   version: 3.5.2

@@ -1,7 +1,6 @@
-import { Badge, Banner, Box, Button, Layout, Loading, Page, Sticky, Tabs } from '@shopify/polaris'
-import React, { useCallback, useState } from 'react'
+import { Badge, Box, Layout, Loading, Page, Sticky, Tabs } from '@shopify/polaris'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CustomeSkeletonPage } from '@assets/components/CustomeSkeletonPage/SkeletonPage'
-import { PlacementSideBar } from '@assets/components/AnnoucementBarComponents/PlacementSideBar'
 import { ContentSideBar } from '@assets/components/AnnoucementBarComponents/ContentSideBar'
 import { DesignSideBar } from '@assets/components/AnnoucementBarComponents/DesignSideBar'
 import { AnnouncementBarSettingsDefault } from '@assets/const/annoucementBarSettingsDefault'
@@ -14,8 +13,12 @@ import ModalConfirmation from '@assets/components/ModalConfirmation/ModalConfirm
 import AnnouncementBar from '@assets/components/AnnouncementBar/AnnouncementBar'
 import { XIcon } from '@shopify/polaris-icons'
 import AnnouncementCarousel from '@assets/components/AnnouncementCarousel/AnnouncementCarousel'
+import { SaveBar, useAppBridge } from '@shopify/app-bridge-react'
 
 export default function AnnouncementBarForm () {
+  const shopify = useAppBridge()
+  const SAVE_BAR_ID = 'save_announcement_bar_settings'
+  const [initialSettings, setInitialSettings] = useState(null)
   const [selected, setSelected] = useState(0)
   const handleTabChange = useCallback(
     (selectedTabIndex) => setSelected(selectedTabIndex),
@@ -26,8 +29,9 @@ export default function AnnouncementBarForm () {
 
   const history = useHistory()
   const { id } = useParams()
+  console.log(id)
   const isEdit = !!id
-  const { data: form, setData: setForm, loading, } = useFetchApi({
+  const { data: form, setData: setForm, loading, fetched } = useFetchApi({
     url: `/announcements/${id}`,
     initLoad: isEdit,
     defaultData: AnnouncementBarSettingsDefault,
@@ -39,6 +43,15 @@ export default function AnnouncementBarForm () {
     handleEdit: togglePublish,
     editing: publishing
   } = useEditApi({ url: `/announcements/${id}/toggle-published` })
+  useEffect(() => {
+    if (!initialSettings && fetched) {
+      setInitialSettings(form)
+      return
+    }
+    const changed = JSON.stringify(form) !== JSON.stringify(initialSettings)
+    if (changed) shopify.saveBar.show(SAVE_BAR_ID)
+    else shopify.saveBar.hide(SAVE_BAR_ID)
+  }, [form, initialSettings])
 
   const tabs = [
     {
@@ -53,45 +66,63 @@ export default function AnnouncementBarForm () {
       component: DesignSideBar
 
     },
-    {
-      id: 'placement',
-      content: 'Placement',
-      component: PlacementSideBar
-    },
+    // {
+    //   id: 'placement',
+    //   content: 'Placement',
+    //   component: PlacementSideBar
+    // },
   ]
   const Component = tabs[selected].component
+
+  const handleBackAction = async () => {
+    await shopify.saveBar.leaveConfirmation()
+    history.push('/announcements')
+  }
+
   const handleSubmit = async () => {
-    if (isEdit) await handleEdit(form)
-    else {
+    if (isEdit) {
+      await handleEdit(form)
+      setInitialSettings(form)
+    } else {
       const res = await handleCreate(form)
-      history.push(`/announcements/${res.data.id}`)
+      history.push(`/announcements/${encodeURIComponent(res.data.id)}`)
       setForm(res.data)
+      setInitialSettings(res.data)
     }
   }
+  const handleDiscard = async () => {
+    setForm(initialSettings)
+    await shopify.saveBar.hide(SAVE_BAR_ID)
+  }
+
   const handleDuplicate = async () => {
+    await handleBackAction()
     const { id, ...newForm } = form
     newForm.isPublished = false
     const res = await handleCreate(newForm)
-    history.push(`/announcements/${res.data.id}`)
+    history.push(`/announcements/${encodeURIComponent(res.data.id)}`)
     setForm(res.data)
+
   }
   const handlePublish = async () => {
     try {
       if (!isEdit) {
         const newForm = { ...form, isPublished: true }
         const res = await handleCreate(newForm)
-        history.push(`/announcements/${res.data.id}`)
+        history.push(`/announcements/${encodeURIComponent(res.data.id)}`)
         setForm(res.data)
+        setInitialSettings(res.data)
+
       } else {
+        await shopify.saveBar.leaveConfirmation()
         await togglePublish()
         setForm(form => ({ ...form, isPublished: !form.isPublished }))
+        setInitialSettings(form => ({ ...form, isPublished: !form.isPublished }))
+
       }
     } catch (error) {}
   }
   const isUpdating = editing || creating || publishing
-  const isTop = form.design.position.value === 'top'
-  const isBottom = form.design.position.value === 'bottom'
-
   const cardBackground =
     form.design.card.background.type === 'gradient'
       ? `linear-gradient(${form.design.card.background.angle}deg, ${form.design.card.background.colors.join(', ')})`
@@ -99,7 +130,7 @@ export default function AnnouncementBarForm () {
   if (loading) return <Loading></Loading>
   return (
     <Page title={`${form.content.name}`}
-          backAction={{ content: 'Settings', url: '/announcements' }}
+          backAction={{ content: 'Settings', onAction: handleBackAction }}
           subtitle={!isEdit ? 'Create and customize your announcement bar here' : `ID: ${id}`}
           primaryAction={{
             content: `${form.isPublished ? 'Unpublish' : 'Publish'}`,
@@ -111,7 +142,8 @@ export default function AnnouncementBarForm () {
             {
               content: 'Duplicate',
               accessibilityLabel: 'Secondary action label',
-              onAction: async () => setDuplicateModalOpen(true)
+              onAction: async () => setDuplicateModalOpen(true),
+              disabled: isUpdating
             },
             {
               content: 'Delete',
@@ -119,7 +151,8 @@ export default function AnnouncementBarForm () {
               onAction: () => {
                 setDeleteModalOpen(true)
               },
-              destructive: true
+              destructive: true,
+              disabled: isUpdating
             },
           ]}
           titleMetadata={
@@ -137,6 +170,7 @@ export default function AnnouncementBarForm () {
 
       <ModalConfirmation
         onPrimaryAction={async () => {
+          await shopify.saveBar.hide(SAVE_BAR_ID)
           await handleDelete({ id })
           history.push('/announcements')
         }}
@@ -151,17 +185,6 @@ export default function AnnouncementBarForm () {
         isOpen={duplicateModalOpen}
         setIsOpen={setDuplicateModalOpen}
       />
-      <Banner
-        tone="warning"
-        title="Essential Announcement Bar app is not activated yet"
-        action={{ content: 'Activate' }}
-        secondaryAction={{ content: 'I have done it' }}
-        dismissible
-      >
-        <p>
-          Please activate the app by clicking 'Activate' button and then 'Save' in the following page.
-        </p>
-      </Banner>
       <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
       </Tabs>
       <Layout>
@@ -184,8 +207,7 @@ export default function AnnouncementBarForm () {
               <div
                 style={{
                   position: 'absolute',
-                  top: isTop ? 0 : undefined,
-                  bottom: isBottom ? 0 : undefined,
+                  top: 0,
                   left: 0,
                   right: 0,
                   zIndex: 2,
@@ -222,9 +244,10 @@ export default function AnnouncementBarForm () {
               </div>
               <CustomeSkeletonPage/>
             </Box>
-            <Box align={'end'} paddingBlock={'600'}>
-              <Button variant={'primary'} onClick={handleSubmit} loading={isUpdating}>Save</Button>
-            </Box>
+            <SaveBar id={SAVE_BAR_ID}>
+              <button onClick={handleSubmit} variant={'primary'} loading={isUpdating && ''}>Save</button>
+              <button onClick={handleDiscard} disabled={isUpdating}>Discard</button>
+            </SaveBar>
           </Sticky>
         </Layout.Section>
       </Layout>

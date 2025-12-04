@@ -36,7 +36,6 @@ const AnnouncementBar = ({ form, onClose, announcement }) => {
             title={announcement.title}
             subheading={announcement.subheading}
             typography={form.design.typography}
-
           />
         }
 

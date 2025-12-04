@@ -1,0 +1,24 @@
+mutation CreateMetaobject(
+  $metaobject:MetaobjectCreateInput!
+) {
+  metaobjectCreate(
+    metaobject: $metaobject
+  ) {
+    metaobject {
+      id
+      handle
+      updatedAt
+      displayName
+      fields{
+        key
+        value
+      }
+      capabilities{publishable{status}}
+    }
+    userErrors {
+      field
+      message
+      code
+    }
+  }
+}

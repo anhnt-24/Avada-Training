@@ -1,11 +1,14 @@
+import { getCurrentShopData } from '@functions/helpers/auth'
+import { initShopify } from '@functions/services/shopifyService'
 import {
+  bulkDeleteAnnouncementBars,
   createAnnouncementBar,
   deleteAnnouncementBar,
+  getAllAnnouncementBars,
   getAnnouncementBarById,
-  getAnnouncementBarsByShop,
-  toggleIsPublished,
+  toggleActive,
   updateAnnouncementBar
-} from '@functions/repositories/announcementBarRepository'
+} from '@functions/services/announcementBarSettingsService'
 
 /**
  *
@@ -14,10 +17,11 @@ import {
  */
 export async function getAll (ctx) {
   try {
-    const shopifyDomain = ctx.state.shopify.shop
-    const bars = await getAnnouncementBarsByShop(shopifyDomain)
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const data = await getAllAnnouncementBars(shopify)
     ctx.body = {
-      data: bars,
+      data: data,
       success: true,
     }
   } catch (e) {
@@ -37,14 +41,14 @@ export async function getAll (ctx) {
 export async function getById (ctx) {
   try {
     const { id } = ctx.params
-    const bar = await getAnnouncementBarById(id)
-
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const data = await getAnnouncementBarById(shopify, id)
     ctx.body = {
-      data: bar,
+      data,
       success: true,
     }
   } catch (e) {
-    
     ctx.body = {
       data: null,
       success: false,
@@ -60,17 +64,15 @@ export async function getById (ctx) {
  */
 export async function create (ctx) {
   try {
-    const shopifyDomain = ctx.state.shopify.shop
-    const payload = {
-      ...ctx.req.body,
-      shopifyDomain
-    }
-    const bar = await createAnnouncementBar(payload)
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const bar = await createAnnouncementBar(shopify, ctx.req.body)
     ctx.body = {
       data: bar,
       success: true
     }
   } catch (e) {
+    console.log(e)
     ctx.body = {
       data: null,
       success: false,
@@ -87,7 +89,9 @@ export async function create (ctx) {
 export async function update (ctx) {
   try {
     const { id } = ctx.params
-    const bar = await updateAnnouncementBar(id, ctx.req.body)
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const bar = await updateAnnouncementBar(shopify, id, ctx.req.body)
     ctx.body = {
       data: bar,
       success: true
@@ -109,8 +113,9 @@ export async function update (ctx) {
 export async function togglePublished (ctx) {
   try {
     const { id } = ctx.params
-    const bar = await toggleIsPublished(id)
-
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    const bar = await toggleActive(shopify, id)
     ctx.body = {
       data: bar,
       success: true
@@ -132,7 +137,27 @@ export async function togglePublished (ctx) {
 export async function remove (ctx) {
   try {
     const { id } = ctx.params
-    await deleteAnnouncementBar(id)
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    await deleteAnnouncementBar(shopify, id)
+    ctx.body = {
+      data: null,
+      success: true
+    }
+  } catch (e) {
+    ctx.body = {
+      data: null,
+      success: false,
+      message: e.message || 'Internal server error'
+    }
+  }
+}
+
+export async function deleteMany (ctx) {
+  try {
+    const shopData = getCurrentShopData(ctx)
+    const shopify = initShopify(shopData)
+    await bulkDeleteAnnouncementBars(shopify, ctx.req.body)
     ctx.body = {
       data: null,
       success: true
