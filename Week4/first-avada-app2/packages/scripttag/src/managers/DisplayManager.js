@@ -97,7 +97,7 @@ export default class DisplayManager {
 
   async waitFirstDelay () {
     const delay = this.settings.firstDelay
-    await new Promise(resolve => setTimeout(resolve, delay * 1000))
+    await this.sleep(delay * 1000)
   }
 
   getNextNotification () {

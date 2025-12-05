@@ -4,17 +4,6 @@ mutation CreateMetaobjectDefinition(
   metaobjectDefinitionCreate(
     definition: $definition
   ) {
-    metaobjectDefinition {
-      id
-      handle
-      updatedAt
-      displayName
-      fields {
-        key
-        value
-      }
-      capabilities{publishable{status}}
-    }
     userErrors {
       field
       message

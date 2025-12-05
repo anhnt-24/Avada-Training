@@ -9,7 +9,9 @@ import { getCurrentShopData } from '@functions/helpers/auth'
 import { initShopify } from '@functions/services/shopifyService'
 
 /**
+ *
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function getAll (ctx) {
   try {
@@ -39,7 +41,6 @@ export async function syncManuallyOrders (ctx) {
     const shopData = getCurrentShopData(ctx)
     const shopify = initShopify(shopData)
     const data = await syncOrders(shopify, shopifyDomain)
-    console.log(data)
     ctx.body = {
       success: true,
       data
@@ -62,9 +63,6 @@ export async function syncOrdersFromCSV (ctx) {
   try {
     const shopifyDomain = ctx.state.shopify.shop
     const records = ctx.req.body
-    console.log('records =', records)
-    console.log('type =', typeof records)
-    console.log('isArray =', Array.isArray(records))
     const notifications = records.map(record => ({ ...record, shopifyDomain, timestamp: new Date().toISOString() }))
     await deleteNotificationsByShop(shopifyDomain)
     const data = await createManyNotifications(notifications)

@@ -11,13 +11,11 @@ export async function registerWebhook (shopify) {
   const unusedHooks = currentWebhooks.filter((webhook) =>
     !webhook.address.includes(appConfig.baseUrl)
   )
-
   if (!isEmpty(unusedHooks)) {
     await Promise.all(
       unusedHooks.map((hook) => shopify.webhook.delete(hook.id))
     )
   }
-
   const webhooks = await shopify.webhook.list({
     address: `https://${appConfig.baseUrl}/webhook/order/new`
   })

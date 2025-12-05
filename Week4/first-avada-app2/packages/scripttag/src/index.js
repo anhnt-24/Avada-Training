@@ -9,6 +9,6 @@ console.log('This is the script tag ');
   const displayManager = new DisplayManager()
   const { notifications, settings } = await apiManager.getNotifications()
   loadFont(settings.fontFamily)
-  displayManager.initialize({ notifications, settings })
+  await displayManager.initialize({ notifications, settings })
 })()
 

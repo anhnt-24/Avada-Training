@@ -12,7 +12,6 @@ export async function getSetting (ctx) {
   try {
     const shopifyDomain = ctx.state.shopify.shop
     const setting = await getSettingByShopDomain(shopifyDomain)
-
     ctx.body = {
       data: setting,
       success: true,
