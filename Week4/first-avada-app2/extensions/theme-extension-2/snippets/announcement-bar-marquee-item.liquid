@@ -1,0 +1,25 @@
+<div class="marquee-item">
+  <p
+    class="announcement-bar__text"
+    style="
+      font-weight: bold;
+      color: {{ design.typography.title.color }};
+      font-family: {{ design.typography.font }};
+      font-size: {{ design.typography.title.size }};
+      "
+  >
+    {{ title }}
+  </p>
+  {% if subheading %}
+    <p
+      class="announcement-bar__text"
+      style="
+        color: {{ design.typography.subtitle.color }};
+        font-family: {{ design.typography.font }};
+        font-size: {{ design.typography.subtitle.size }};
+        "
+    >
+      {{ subheading }}
+    </p>
+  {% endif %}
+</div>

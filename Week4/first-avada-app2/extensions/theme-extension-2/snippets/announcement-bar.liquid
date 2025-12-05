@@ -1,0 +1,104 @@
+<div class="announcement-bar__content">
+  <div class="marquee-container" style="flex:{{ flexValue }}">
+    {% if content.type == 'running' %}
+      <div class="marquee-wrapper">
+        {% for i in (0..2) %}
+          {% render 'announcement-bar-marquee-item',
+            title: content.title,
+            subheading: content.subheading,
+            design: design
+          %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if content.type == 'simple' %}
+      {% render 'announcement-bar-marquee-item', title: content.title, subheading: content.subheading, design: design %}
+    {% endif %}
+    {% if content.type == 'rotating' %}
+      {% render 'announcement-bar-marquee-item', title: content.title, subheading: content.subheading, design: design %}
+    {% endif %}
+  </div>
+  {% if content.cta.type == 'button' %}
+    <a href="{{ content.cta.link }}">
+      <button
+        class="announcement-bar__button "
+        style="
+          background: {{ buttonBackground }};
+          border: {{ design.button.border.size }}px solid {{ design.button.border.color }};
+          border-radius: {{ design.button.cornerRadius }}px;
+          color: {{ design.button.background.colors[1] }};
+          font-size: {{ design.button.size }}px;
+          "
+      >
+        {{ content.cta.textBtn }}
+      </button>
+    </a>
+  {% endif %}
+</div>
+
+<style>
+  .announcement-bar__wrapper {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .announcement-bar__Xbutton {
+    border: none;
+    background-color: transparent;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  .announcement-bar__Xbutton:hover {
+
+  }
+
+  .announcement-bar__button {
+    cursor: pointer;
+    font-weight: semibold;
+    padding: 6px 16px;
+
+  }
+
+  .announcement-bar__content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .marquee-container {
+    position: relative;
+    overflow: hidden;
+    max-width: 480px;
+  }
+
+  .announcement-bar__text {
+    text-align: center;
+    white-space: wrap;
+  }
+
+  .marquee-wrapper {
+    width: 300%;
+    display: flex;
+    gap: 48px;
+    animation: marquee-scroll 15s linear infinite;
+  }
+
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .marquee-container:hover .marquee-wrapper {
+    animation-play-state: paused;
+  }
+</style>

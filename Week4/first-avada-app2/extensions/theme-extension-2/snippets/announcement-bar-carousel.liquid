@@ -1,0 +1,91 @@
+<div class="carousel-wrapper">
+  <button class="carousel-btn prev" onclick="announcementCarouselScrollPrev(this)">&#x2039;</button>
+  <div class="carousel-container" data-carousel>
+    {% for announcement in content.announcements %}
+      <div class="carousel-item">
+        {% render 'announcement-bar', content: content, design: design, buttonBackground: buttonBackground %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <button class="carousel-btn next" onclick="announcementCarouselScrollNext(this)">&#x203A;</button>
+</div>
+
+<script>
+  function announcementCarouselScrollNext (btn) {
+    const wrapper = btn.closest('.carousel-wrapper')
+    const container = wrapper.querySelector('[data-carousel]')
+    const width = container.clientWidth
+    container.scrollBy({ left: width, behavior: 'smooth' })
+  }
+
+  function announcementCarouselScrollPrev (btn) {
+    const wrapper = btn.closest('.carousel-wrapper')
+    const container = wrapper.querySelector('[data-carousel]')
+    const width = container.clientWidth
+    container.scrollBy({ left: -width, behavior: 'smooth' })
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const wrapper = document.querySelector('.carousel-wrapper')
+    const container = wrapper.querySelector('[data-carousel]')
+    const items = container.querySelectorAll('.carousel-item')
+    const width = container.clientWidth
+
+    let direction = 1 // 1 = next, -1 = prev
+
+    setInterval(() => {
+      const maxScroll = container.scrollWidth - container.clientWidth
+      const current = container.scrollLeft
+
+      // Nếu đang chạy tới và chạm cuối → đổi hướng
+      if (direction === 1 && current >= maxScroll - 5) {
+        direction = -1
+      }
+      // Nếu đang chạy lui và chạm đầu → đổi hướng
+      else if (direction === -1 && current <= 5) {
+        direction = 1
+      }
+
+      container.scrollBy({
+        left: width * direction,
+        behavior: 'smooth',
+      })
+    }, 3000) // đổi slide mỗi 3s (tuỳ chỉnh)
+  })
+</script>
+
+<style>
+  .carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .carousel-btn {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px 8px;
+    opacity: 0;
+  }
+
+  .carousel-wrapper:hover .carousel-btn {
+    opacity: 1;
+  }
+
+  .carousel-container {
+    display: flex;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .carousel-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+</style>

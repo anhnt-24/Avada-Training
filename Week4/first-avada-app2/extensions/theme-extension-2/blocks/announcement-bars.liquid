@@ -1,52 +1,111 @@
-{% for value in metaobjects['announcement_bar_settings'].values %}
-  {% assign cfg = value.config | parse_json %}
-  <div class="ann-bar" style="background-color: red">
-    <div class="ann-wrapper">
+{% for cfg in metaobjects.announcement_bar_settings.values %}
+  {% assign content = cfg.content.value | parse_json %}
+  {% assign design = cfg.design.value | parse_json %}
+  {% if design.card.background.type == 'gradient' %}
+    {% assign colors = design.card.background.colors | join: ', ' %}
+    {% assign cardBackground = 'linear-gradient('
+      | append: design.card.background.angle
+      | append: 'deg, '
+      | append: colors
+      | append: ')'
+    %}
+  {% else %}
+    {% assign cardBackground = design.card.background.colors[0] %}
+  {% endif %}
 
-      {%- if cfg.content.type == "simple" -%}
-        <div class="ann-item">
-          <div class="ann-title">{{ cfg.content.title }}</div>
-          {% if cfg.content.subheading != blank %}
-            <div class="ann-subtitle">{{ cfg.content.subheading }}</div>
-          {% endif %}
-        </div>
-      {%- endif -%}
+  {% if design.button.background.type == 'gradient' %}
+    {% assign colors = design.button.background.colors | join: ', ' %}
+    {% assign buttonBackground = 'linear-gradient('
+      | append: design.button.background.angle
+      | append: 'deg, '
+      | append: colors
+      | append: ')'
+    %}
+  {% else %}
+    {% assign buttonBackground = design.button.background.colors[0] %}
+  {% endif %}
 
-      {%- if cfg.content.type == "rotate" -%}
-        <div class="ann-rotate" data-speed="{{ cfg.content.rotateSpeed }}">
-          {% for item in cfg.content.announcements %}
-            <div class="ann-item">{{ item.title }}</div>
-          {% endfor %}
-        </div>
-      {%- endif -%}
+  {% assign flexValue = '' %}
+  {% if content.type == 'running' %}
+    {% assign flexValue = '1' %}
+  {% endif %}
 
-      {%- if cfg.content.cta.textBtn != blank -%}
-        <a class="ann-btn" href="{{ cfg.content.cta.link }}">{{ cfg.content.cta.textBtn }}</a>
-      {%- endif -%}
+  <div
+    class="announcement-bar__wrapper"
+    style="
+      padding: 10px;
+      border-radius: {{ design.card.cornerRadius }};
+      border: {{ design.card.border.size }}px solid {{ design.card.border.color }};
+      background: {{ cardBackground }}
+      "
+  >
+    {% if content.type == 'rotating' %}
+      {% render 'announcement-bar-carousel',
+        content: content,
+        design: design,
+        flexValue: flexValue,
+        buttonBackground: buttonBackground
+      %}
+    {% else %}
+      {% render "announcement-bar",
+        content: content,
+        design: design,
+        flexValue: flexValue,
+        buttonBackground: buttonBackground
+      %}
+    {% endif %}
 
-      {%- if cfg.design.closeIcon.size > 0 -%}
-        <button class="ann-close">&times;</button>
-      {%- endif -%}
-
-    </div>
+    <button
+      class="announcement-bar__Xbutton"
+      style="color:{{ design.closeIcon.color }}"
+    >
+      x
+    </button>
   </div>
 {% endfor %}
-
-
 <style>
-  .ann-bar {
-    background: red;
-  }
-
-  .announcement-bar {
-    background: red;
+  .announcement-bar__wrapper {
     padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
   }
 
-  .announcement-title {
-    font-size: 18px;
+  .announcement-bar__Xbutton {
+    border: none;
+    background-color: transparent;
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 24px;
+
+  }
+
+  .announcement-bar__Xbutton:hover {
+    opacity: 0.8;
+  }
+
+  .announcement-bar__content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    .marquee-container {
+      position: relative;
+      overflow: hidden;
+      max-width: 480px;
+
+    }
+
+    .announcement-bar__text {
+      text-align: 'center';
+      white-space: 'wrap'
+    }
   }
 </style>
+
 {% schema %}
 {
   "name": "Metaobject Announce Bar",
